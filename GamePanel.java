@@ -2,28 +2,35 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionAdapter; // For hover effects
+import java.awt.event.MouseMotionAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
 public class GamePanel extends JPanel {
     private List<Monkey> monkeys;
-    private Monkey selectedMonkey = null; // To track the currently selected monkey
+    private Monkey selectedMonkey = null;
     private UpgradeGUI upgradePanel;
-    private GameState gameState;
+    private GameState gameState; // Will be passed from MainFrame
 
-    public GamePanel() {
+    // MONEY_PER_POP is just for demo purposes, as projectiles going off-screen = pop
+    private static final int MONEY_PER_POP = 2;
+
+
+    public GamePanel(GameState gameState) { // Constructor now takes GameState
+        this.gameState = gameState;
+        // The preferred size is for the game area itself.
+        // The SideInfoPanel will add to the total window width.
         setPreferredSize(new Dimension(800, 600));
-        setBackground(Color.LIGHT_GRAY);
+        setBackground(Color.LIGHT_GRAY); // Main game area background
 
-        gameState = new GameState(500); // Start with 500 money
         upgradePanel = new UpgradeGUI();
 
         monkeys = new ArrayList<>();
-        // Initialize monkeys (all start at level 1 for easier testing of upgrades)
         monkeys.add(new Monkey(100, 100, 120, 30, 1));
         monkeys.add(new Monkey(250, 300, 150, 40, 1));
         monkeys.add(new Monkey(400, 500, 100, 35, 1));
+        monkeys.add(new MonkeyB(300, 100, 120, 30, 1));
+
 
         addMouseListener(new MouseAdapter() {
             @Override
@@ -31,15 +38,13 @@ public class GamePanel extends JPanel {
                 int clickX = e.getX();
                 int clickY = e.getY();
 
-                // 1. Check if click is on the Upgrade GUI (if a monkey is selected)
                 if (selectedMonkey != null && selectedMonkey.isSelected()) {
                     if (upgradePanel.handleClick(clickX, clickY, selectedMonkey, gameState)) {
-                        repaint(); // Repaint to reflect changes (level, cost, money)
-                        return; // Click handled by upgrade GUI, stop further processing
+                        repaint();
+                        return;
                     }
                 }
 
-                // 2. Handle Monkey Selection
                 boolean aMonkeyWasClickedThisTime = false;
                 Monkey currentlyClickedMonkey = null;
 
@@ -52,29 +57,24 @@ public class GamePanel extends JPanel {
                 }
 
                 if (aMonkeyWasClickedThisTime) {
-                    // A monkey was clicked
-                    if (selectedMonkey != currentlyClickedMonkey) { // If it's a new monkey or first selection
+                    if (selectedMonkey != currentlyClickedMonkey) {
                         if (selectedMonkey != null) {
-                            selectedMonkey.setSelected(false); // Deselect the old one
+                            selectedMonkey.setSelected(false);
                         }
-                        selectedMonkey = currentlyClickedMonkey; // Select the new one
+                        selectedMonkey = currentlyClickedMonkey;
                         selectedMonkey.setSelected(true);
                     }
-                    // If clicking the same monkey, it remains selected (no change here)
                 } else {
-                    // Clicked on empty space, deselect any currently selected monkey
                     if (selectedMonkey != null) {
                         selectedMonkey.setSelected(false);
                         selectedMonkey = null;
                     }
                 }
 
-                // 3. Handle Shooting (only if the click wasn't handled by the GUI)
-                // All monkeys attempt to shoot at the click location
                 for (Monkey m : monkeys) {
                     m.shoot(clickX, clickY);
                 }
-                repaint(); // Repaint to show projectiles or selection changes
+                repaint();
             }
         });
 
@@ -83,26 +83,30 @@ public class GamePanel extends JPanel {
             public void mouseMoved(MouseEvent e) {
                 if (selectedMonkey != null && selectedMonkey.isSelected()) {
                     upgradePanel.updateHover(e.getX(), e.getY(), selectedMonkey, gameState);
-                    repaint(); // Repaint to show hover effect
-                } else { // Ensure hover state is reset if no monkey is selected
-                     upgradePanel.updateHover(-1, -1, null, gameState); // Pass invalid coords
-                     repaint();
+                } else {
+                    upgradePanel.updateHover(-1, -1, null, gameState);
                 }
+                repaint();
             }
         });
 
-        Timer timer = new Timer(16, ev -> {
+        Timer gameLoopTimer = new Timer(16, ev -> {
             updateGame();
-            repaint(); // repaint() is often called here, but also after specific actions
+            repaint();
         });
-        timer.start();
+        gameLoopTimer.start();
+        setFocusable(true); // Important for potential keyboard input later
+        requestFocusInWindow();
     }
 
     private void updateGame() {
         for (Monkey m : monkeys) {
-            m.update(getWidth(), getHeight());
+            int projectilesPopped = m.update(getWidth(), getHeight());
+            if (projectilesPopped > 0) {
+                gameState.incrementBloonsKilled(projectilesPopped);
+                gameState.addMoney(projectilesPopped * MONEY_PER_POP); // Give money for "popped" projectiles
+            }
         }
-        // Other game logic updates can go here
     }
 
     @Override
@@ -111,19 +115,14 @@ public class GamePanel extends JPanel {
         Graphics2D g2d = (Graphics2D) g;
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        // Draw all monkeys (they handle their own range and level drawing)
         for (Monkey m : monkeys) {
             m.draw(g2d);
         }
 
-        // Draw the Upgrade GUI if a monkey is selected and it's supposed to be visible
         if (selectedMonkey != null && selectedMonkey.isSelected()) {
             upgradePanel.draw(g2d, selectedMonkey, gameState);
         }
 
-        // Draw GameState info (e.g., money)
-        g2d.setColor(Color.BLACK);
-        g2d.setFont(new Font("Arial", Font.BOLD, 16));
-        g2d.drawString("Money: $" + gameState.getMoney(), 10, 20);
+        // Money and other stats are no longer drawn here; they are in SideInfoPanel
     }
 }

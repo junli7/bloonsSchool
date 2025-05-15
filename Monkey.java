@@ -79,11 +79,19 @@ public class Monkey {
         }
     }
 
-    public void update(int screenWidth, int screenHeight) {
-        projectiles.removeIf(p -> {
+    public int update(int screenWidth, int screenHeight) {
+        int projectilesRemoved = 0;
+        List<Projectile> toRemove = new ArrayList<>();
+
+        for (Projectile p : projectiles) {
             p.update();
-            return p.isOffScreen(screenWidth, screenHeight);
-        });
+            if (p.isOffScreen(screenWidth, screenHeight)) {
+                toRemove.add(p);
+                projectilesRemoved++;
+            }
+        }
+        projectiles.removeAll(toRemove);
+        return projectilesRemoved;
     }
 
     public void shoot(int targetX, int targetY) {
@@ -120,6 +128,13 @@ public class Monkey {
     public boolean isSelected() {
         return isSelected;
     }
+    public void setColor(Color m, Color p){ monkeyColor = m; projectileColor =p;}
+    public void setprojectileSpeed(double s){ projectileSpeed =s;}
+    public void setprojectRadius(int s){ projectileRadius =s;}
+    public void setShootCooldown(int s){ shootCooldown =s;}
+
+
+
 
     public int getX() { return x; }
     public int getY() { return y; }
@@ -127,4 +142,6 @@ public class Monkey {
     public double getHitbox() { return hitbox; } // Added getter
     public int getUpgradeCost() { return upgradeCost; }
     public int getLevel() { return level; } // Added getter
+
+    
 }

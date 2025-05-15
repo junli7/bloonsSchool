@@ -11,6 +11,7 @@ public class GamePanel extends JPanel {
     private Monkey selectedMonkey = null;
     private UpgradeGUI upgradePanel;
     private GameState gameState; // Will be passed from MainFrame
+    private Map map;
 
     // MONEY_PER_POP is just for demo purposes, as projectiles going off-screen = pop
     private static final int MONEY_PER_POP = 2;
@@ -29,7 +30,7 @@ public class GamePanel extends JPanel {
         mapCoordinates.add(new Point(1000,500));
 
 
-        Map mapOne = new Map(mapCoordinates);
+        map = new Map(mapCoordinates);
         
         upgradePanel = new UpgradeGUI();
 
@@ -130,6 +131,7 @@ public class GamePanel extends JPanel {
         if (selectedMonkey != null && selectedMonkey.isSelected()) {
             upgradePanel.draw(g2d, selectedMonkey, gameState);
         }
+        map.draw(g2d);
 
         // Money and other stats are no longer drawn here; they are in SideInfoPanel
     }

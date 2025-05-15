@@ -23,6 +23,14 @@ public class GamePanel extends JPanel {
         setPreferredSize(new Dimension(800, 600));
         setBackground(Color.LIGHT_GRAY); // Main game area background
 
+        //map
+        ArrayList<Point> mapCoordinates = new ArrayList<Point>();
+        mapCoordinates.add(new Point(0,500));
+        mapCoordinates.add(new Point(1000,500));
+
+
+        Map mapOne = new Map(mapCoordinates);
+
         upgradePanel = new UpgradeGUI();
 
         monkeys = new ArrayList<>();

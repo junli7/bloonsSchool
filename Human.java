@@ -16,11 +16,11 @@ public class Human {
         slowed = false;
     }
 
-        boolean isCamo(){
+        public boolean isCamo(){
             return camo;
     }
 
-        boolean isSlowed(){
+        public boolean isSlowed(){
         return slowed;
     }
 

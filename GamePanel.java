@@ -30,7 +30,7 @@ public class GamePanel extends JPanel {
 
 
         Map mapOne = new Map(mapCoordinates);
-
+        
         upgradePanel = new UpgradeGUI();
 
         monkeys = new ArrayList<>();

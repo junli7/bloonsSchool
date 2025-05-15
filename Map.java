@@ -1,5 +1,4 @@
-import java.awt.Color;
-import java.awt.Point;
+import java.awt.*;
 import java.util.ArrayList;
 
 public class Map {
@@ -13,7 +12,7 @@ public class Map {
     public void draw(Graphics2D g2d) {
         g2d.setColor(Color.BLACK);
         for (int i = 1; i<coordinates.size(); i++){
-            g2d.drawLine(coordinates.get(i-1).getX(),coordinates.get(i-1).getX(),coordinates.get(i).getX(),coordinates.get(i).getX());
+            g2d.drawLine((int)coordinates.get(i-1).getX(),(int)coordinates.get(i-1).getX(),(int)coordinates.get(i).getX(),(int)coordinates.get(i).getX());
         }
     }
 

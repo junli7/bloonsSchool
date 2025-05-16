@@ -4,8 +4,10 @@ import java.util.ArrayList;
 public class Map {
     
     private ArrayList<Point> coordinates = new ArrayList<Point>();
+    private ArrayList<Human> humans;
 
     public Map(ArrayList<Point> coords){
+        humans = new ArrayList<Human>();
         coordinates = coords;
     }
 
@@ -14,6 +16,19 @@ public class Map {
         for (int i = 1; i<coordinates.size(); i++){
             g2d.drawLine((int)coordinates.get(i-1).getX(),(int)coordinates.get(i-1).getX(),(int)coordinates.get(i).getX(),(int)coordinates.get(i).getX());
         }
+    }
+
+    public void update(){
+        List<Human> toRemove = new ArrayList<>();
+
+        for (Human h : humans) {
+            h.update();
+            if (h.getX()>coordinates.get(coordinates.size()-1).getX()) {
+                toRemove.add(h);
+            }
+        }
+        humans.removeAll(toRemove);
+        
     }
 
     public double setTargetSpeedX(Human a){
@@ -45,5 +60,5 @@ public class Map {
 
     }
 
-}
 
+}

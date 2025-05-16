@@ -8,9 +8,11 @@ import java.util.List;
 
 public class GamePanel extends JPanel {
     private List<Monkey> monkeys;
+    private List<Human> humans;
     private Monkey selectedMonkey = null;
     private UpgradeGUI upgradePanel;
     private GameState gameState; // Will be passed from MainFrame
+    private int gameTick;
     private Map map;
 
     // MONEY_PER_POP is just for demo purposes, as projectiles going off-screen = pop
@@ -19,6 +21,7 @@ public class GamePanel extends JPanel {
 
     public GamePanel(GameState gameState) { // Constructor now takes GameState
         this.gameState = gameState;
+        gameTick = 0;
         // The preferred size is for the game area itself.
         // The SideInfoPanel will add to the total window width.
         setPreferredSize(new Dimension(800, 600));
@@ -108,7 +111,11 @@ public class GamePanel extends JPanel {
         requestFocusInWindow();
     }
 
+
+
     private void updateGame() {
+        gameTick++;
+
         for (Monkey m : monkeys) {
             int projectilesPopped = m.update(getWidth(), getHeight());
             if (projectilesPopped > 0) {
@@ -116,6 +123,10 @@ public class GamePanel extends JPanel {
                 gameState.addMoney(projectilesPopped * MONEY_PER_POP); // Give money for "popped" projectiles
             }
         }
+
+        
+
+
     }
 
     @Override
@@ -132,6 +143,7 @@ public class GamePanel extends JPanel {
             upgradePanel.draw(g2d, selectedMonkey, gameState);
         }
         map.draw(g2d);
+
 
         // Money and other stats are no longer drawn here; they are in SideInfoPanel
     }

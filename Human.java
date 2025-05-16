@@ -1,5 +1,9 @@
 //ENEMIES -> Balloons
 
+import java.util.List;
+import java.util.ArrayList;
+import java.awt.*;
+
 public class Human {
     
     private int speed;
@@ -22,6 +26,18 @@ public class Human {
         position = 0;
         camo = false;
         slowed = false;
+    }
+
+    public void draw(Graphics2D g2d, int x, int y) {
+        g2d.setColor(Color.BLUE);
+        g2d.drawOval(x, y, hitbox, hitbox); //not sure if hitbox is radius or diameter, check later
+        
+        
+    }
+
+    public void update() {
+        x += dx;
+        y += dy;
     }
 
     public int getX(){

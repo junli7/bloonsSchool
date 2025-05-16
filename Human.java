@@ -17,11 +17,11 @@ public class Human {
     private boolean camo; //property, only certain towers can attack
     private boolean slowed; //temporary effect
 
-    public Human(int s, int h, int hit, int x, int y){
-        this.x = x;
-        this.y = y;
-        speed = s;
-        health = h;
+    public Human(int speedc, int healthc, int hit, int x1, int y1){
+        this.x = x1;
+        this.y = y1;
+        speed = speedc;
+        health = healthc;
         hitbox = hit;
         position = 0;
         camo = false;

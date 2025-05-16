@@ -33,7 +33,7 @@ public class Map {
 
     public ArrayList<Human> spawnHuman(ArrayList<Human> humans){
         humans = new ArrayList<>();
-        humans.add(new Human(1, 1, 1, 0, 0));
+        humans.add(new Human(1, 1, 50,30, 40));
 
         return humans;
     }

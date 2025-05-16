@@ -143,7 +143,7 @@ public class GamePanel extends JPanel {
         }
 
         for (Human h : humans){
-            h.draw(g2d, h.getX(), h.getY());
+            h.draw(g2d);
         }
 
 

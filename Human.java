@@ -28,7 +28,7 @@ public class Human {
         slowed = false;
     }
 
-    public void draw(Graphics2D g2d, int x, int y) {
+    public void draw(Graphics2D g2d) {
         g2d.setColor(Color.BLUE);
         g2d.drawOval(x, y, hitbox, hitbox); //not sure if hitbox is radius or diameter, check later
         

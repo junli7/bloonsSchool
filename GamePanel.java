@@ -43,6 +43,8 @@ public class GamePanel extends JPanel {
         monkeys.add(new Monkey(400, 500, 100, 35, 1));
         monkeys.add(new MonkeyB(300, 100, 120, 30, 1));
 
+        humans = new ArrayList<Human>();
+        humans = map.spawnHuman(humans);
 
         addMouseListener(new MouseAdapter() {
             @Override
@@ -124,10 +126,10 @@ public class GamePanel extends JPanel {
             }
         }
 
-        //for (Human h : humans){
+       //for (Human h : humans){
         //    h.update(map.setTargetSpeedX(h),map.setTargetSpeedY(h));
         //}
-
+        
     }
 
     @Override
@@ -140,9 +142,9 @@ public class GamePanel extends JPanel {
             m.draw(g2d);
         }
 
-        //for (Human h : humans){
-          //  h.draw(g2d, 0, 0);
-        //}
+        for (Human h : humans){
+            h.draw(g2d, h.getX(), h.getY());
+        }
 
 
         if (selectedMonkey != null && selectedMonkey.isSelected()) {

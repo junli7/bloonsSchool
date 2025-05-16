@@ -4,7 +4,7 @@ import java.awt.*; // Import BorderLayout
 public class MainFrame {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            JFrame frame = new JFrame("Monkey Shooter Deluxe");
+            JFrame frame = new JFrame("johntig");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
             // Create GameState - this will be shared

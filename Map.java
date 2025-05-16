@@ -4,10 +4,9 @@ import java.util.ArrayList;
 public class Map {
     
     private ArrayList<Point> coordinates = new ArrayList<Point>();
-    private ArrayList<Human> humans;
+
 
     public Map(ArrayList<Point> coords){
-        humans = new ArrayList<Human>();
         coordinates = coords;
     }
 
@@ -18,17 +17,21 @@ public class Map {
         }
     }
 
-    public void update(){
-        List<Human> toRemove = new ArrayList<>();
+    public void update(ArrayList<Human> humans){
+        ArrayList<Human> toRemove = new ArrayList<>();
 
         for (Human h : humans) {
-            h.update();
+            h.update(setTargetSpeedX(h),setTargetSpeedY(h));
             if (h.getX()>coordinates.get(coordinates.size()-1).getX()) {
                 toRemove.add(h);
             }
         }
         humans.removeAll(toRemove);
         
+    }
+
+    public void spawnHuman(ArrayList<Human> humans){
+        humans.add(new Human(1, 1, 1, 0, 0));
     }
 
     public double setTargetSpeedX(Human a){

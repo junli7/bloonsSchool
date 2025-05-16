@@ -32,12 +32,11 @@ public class Human {
         g2d.setColor(Color.BLUE);
         g2d.drawOval(x, y, hitbox, hitbox); //not sure if hitbox is radius or diameter, check later
         
-        
     }
 
-    public void update() {
-        x += dx;
-        y += dy;
+    public void update(double dx1, double dy1) {
+        x += dx1; //dx calculated from path
+        y += dy1;
     }
 
     public int getX(){
@@ -52,13 +51,7 @@ public class Human {
         return speed;
     }
 
-    public int getdx(){
-        return dx;
-    }
 
-    public int getdy(){
-        return dy;
-    }
 
     public int getPosition(){
         return position;

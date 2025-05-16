@@ -8,7 +8,7 @@ import java.util.List;
 
 public class GamePanel extends JPanel {
     private List<Monkey> monkeys;
-    private List<Human> humans;
+    private ArrayList<Human> humans;
     private Monkey selectedMonkey = null;
     private UpgradeGUI upgradePanel;
     private GameState gameState; // Will be passed from MainFrame
@@ -124,8 +124,9 @@ public class GamePanel extends JPanel {
             }
         }
 
-        
-
+        //for (Human h : humans){
+        //    h.update(map.setTargetSpeedX(h),map.setTargetSpeedY(h));
+        //}
 
     }
 
@@ -138,6 +139,11 @@ public class GamePanel extends JPanel {
         for (Monkey m : monkeys) {
             m.draw(g2d);
         }
+
+        //for (Human h : humans){
+          //  h.draw(g2d, 0, 0);
+        //}
+
 
         if (selectedMonkey != null && selectedMonkey.isSelected()) {
             upgradePanel.draw(g2d, selectedMonkey, gameState);

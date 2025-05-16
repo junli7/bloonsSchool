@@ -6,6 +6,7 @@ public class Projectile {
     private int radius;
     private Color color;
     private double speed;
+    private int damage;
 
     public Projectile(double startX, double startY, double targetX, double targetY, double speed, int radius, Color color) {
         this.x = startX;
@@ -13,6 +14,7 @@ public class Projectile {
         this.radius = radius;
         this.color = color;
         this.speed = speed;
+        damage=1;
 
         // Calculate direction vector
         double angle = Math.atan2(targetY - startY, targetX - startX);
@@ -42,5 +44,13 @@ public class Projectile {
 
     public double getY() {
         return y;
+    }
+
+    public int getDamage() {
+        return damage;
+    }
+    public Rectangle getBounds() {
+        // Assuming radius ias half the diameter for the bounding box
+        return new Rectangle((int) (x - radius), (int) (y - radius), radius * 2, radius * 2);
     }
 }

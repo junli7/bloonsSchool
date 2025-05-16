@@ -133,7 +133,9 @@ public class Monkey {
     public void setprojectRadius(int s){ projectileRadius =s;}
     public void setShootCooldown(int s){ shootCooldown =s;}
 
-
+  public List<Projectile> getProjectiles() { // Add this getter
+        return projectiles;
+    }
 
 
     public int getX() { return x; }

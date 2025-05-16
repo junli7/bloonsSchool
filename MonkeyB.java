@@ -8,7 +8,7 @@ public class MonkeyB extends Monkey {
         super(nx, ny, nrange, nhitbox, nlevel);
         setColor(Color.BLUE, Color.BLACK);
         setProjectileRadius(10);
-        setProjectileSpeed(10.0); // Adjusted speed
+        setProjectileSpeed(5); // Adjusted speed
         setShootCooldown(300L);   // Use L for long, slightly faster cooldown
         this.canSeeCamo = true; // Example: MonkeyB can always see camo
     }

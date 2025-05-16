@@ -6,6 +6,7 @@ import java.awt.event.MouseMotionAdapter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random; // For more varied spawns
 
 public class GamePanel extends JPanel {
     private List<Monkey> monkeys;
@@ -17,6 +18,13 @@ public class GamePanel extends JPanel {
     private Map map;
 
     private static final int MONEY_PER_POP = 5;
+
+    // --- Spawn Control Variables ---
+    private int baseSpawnCooldownTicks = 1; // Cooldown in game ticks (e.g., 180 ticks = 3 seconds at 60 FPS)
+    private int currentSpawnCooldown;       // Ticks remaining until next spawn
+    private int humansPerSpawn = 1;         // Number of humans to spawn at each event
+    private double chanceForCamoSpawn = 0.15; // 15% chance a spawned human is camo
+    private Random random = new Random();   // For random elements in spawning
 
     public GamePanel(GameState gameState) {
         this.gameState = gameState;
@@ -38,12 +46,13 @@ public class GamePanel extends JPanel {
 
         monkeys = new ArrayList<>();
         monkeys.add(new MonkeyB(150, 200, 120, 30, 1));
-        monkeys.add(new Monkey(600, 200, 150, 40, 3));
-        monkeys.add(new Monkey(400, 400, 100, 35, 1));
+        monkeys.add(new Monkey(150, 250, 150, 40, 3));
+        monkeys.add(new Monkey(100, 300, 100, 35, 1));
         monkeys.add(new MonkeyB(300, 400, 130, 30, 1));
 
         humans = new ArrayList<>();
-        spawnTestHuman(); // Initial humans
+        // Initialize first spawn cooldown
+        this.currentSpawnCooldown = baseSpawnCooldownTicks; // Start with the full cooldown
 
         addMouseListener(new MouseAdapter() {
             @Override
@@ -96,7 +105,7 @@ public class GamePanel extends JPanel {
             }
         });
 
-        Timer gameLoopTimer = new Timer(16, ev -> {
+        Timer gameLoopTimer = new Timer(16, ev -> { // Approx 60 FPS
             updateGame();
             repaint();
         });
@@ -105,28 +114,48 @@ public class GamePanel extends JPanel {
         requestFocusInWindow();
     }
 
-    private void spawnTestHuman() {
-        if (map != null) {
-            Human newHuman = map.spawnHuman(1.5, 5, 25, false);
-            if (newHuman != null) humans.add(newHuman);
-            Human camoHuman = map.spawnHuman(1.2, 3, 25, true);
-            if (camoHuman != null) humans.add(camoHuman);
+    // Method to handle spawning logic
+    private void trySpawnHumans() {
+        currentSpawnCooldown--; // Decrement cooldown each tick
+
+        if (currentSpawnCooldown <= 0) {
+            // Time to spawn!
+            for (int i = 0; i < humansPerSpawn; i++) {
+                if (map != null) {
+                    // Customize human properties here
+                    double speed = 1.0 + random.nextDouble() * 1.0; // Random speed between 1.0 and 2.0
+                    int health = 3 + gameState.getCurrentWave() + random.nextInt(3); // Health increases with wave, some randomness
+                    int hitbox = 20 + random.nextInt(11); // Random hitbox between 20-30
+                    boolean isCamo = random.nextDouble() < chanceForCamoSpawn;
+
+                    Human newHuman = map.spawnHuman(speed, health, hitbox, isCamo);
+                    if (newHuman != null) {
+                        humans.add(newHuman);
+                    }
+                }
+            }
+            // Reset cooldown for the next spawn
+            // You can make this dynamic, e.g., cooldown decreases as waves progress
+            currentSpawnCooldown = baseSpawnCooldownTicks - (gameState.getCurrentWave() * 5); // Example: cooldown slightly decreases
+            if (currentSpawnCooldown < 30) currentSpawnCooldown = 30; // Minimum cooldown (e.g., 0.5 seconds)
+
+            System.out.println("Spawned " + humansPerSpawn + " humans. Next spawn in " + currentSpawnCooldown + " ticks.");
         }
     }
+
 
     private void updateGame() {
         gameTick++;
 
-        if (gameTick % 240 == 0) {
-            Human newHuman = map.spawnHuman((gameTick % 480 == 0) ? 2.0 : 1.5,
-                    5 + (gameState.getCurrentWave()), 25, (gameTick % 720 == 0));
-            if (newHuman != null) humans.add(newHuman);
-        }
+        // Handle human spawning
+        trySpawnHumans();
 
+        // Update Monkeys
         for (Monkey m : monkeys) {
             m.updateAndTarget(getWidth(), getHeight(), humans, map.getPath());
         }
 
+        // Update Humans
         Iterator<Human> humanIterator = humans.iterator();
         while (humanIterator.hasNext()) {
             Human h = humanIterator.next();
@@ -142,11 +171,7 @@ public class GamePanel extends JPanel {
                 humanIterator.remove();
             }
         }
-        // No longer need checkCollisions() here, as projectiles handle their own hits
     }
-
-    // The checkCollisions() method is removed as homing projectiles manage their own hits.
-    // If you add non-homing projectiles later, you might re-introduce a collision system.
 
     @Override
     protected void paintComponent(Graphics g) {
@@ -155,10 +180,34 @@ public class GamePanel extends JPanel {
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
         if (map != null) map.draw(g2d);
-        for (Human h : humans) h.draw(g2d); // Draw humans before monkeys so projectiles can appear on top
-        for (Monkey m : monkeys) m.draw(g2d); // Monkeys draw their own projectiles
+        for (Human h : humans) h.draw(g2d);
+        for (Monkey m : monkeys) m.draw(g2d);
         if (selectedMonkey != null && selectedMonkey.isSelected()) {
             upgradePanel.draw(g2d, selectedMonkey, gameState);
+        }
+    }
+
+    // --- Public methods to change spawn settings ---
+    public void setBaseSpawnCooldownTicks(int ticks) {
+        if (ticks > 0) {
+            this.baseSpawnCooldownTicks = ticks;
+            // Optionally, reset currentSpawnCooldown if a new base is set mid-game
+            // this.currentSpawnCooldown = this.baseSpawnCooldownTicks;
+            System.out.println("Base spawn cooldown set to: " + ticks + " ticks.");
+        }
+    }
+
+    public void setHumansPerSpawn(int count) {
+        if (count > 0) {
+            this.humansPerSpawn = count;
+            System.out.println("Humans per spawn set to: " + count);
+        }
+    }
+
+    public void setChanceForCamoSpawn(double chance) {
+        if (chance >= 0.0 && chance <= 1.0) {
+            this.chanceForCamoSpawn = chance;
+            System.out.println("Chance for camo spawn set to: " + (chance * 100) + "%");
         }
     }
 }

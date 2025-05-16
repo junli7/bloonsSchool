@@ -16,8 +16,9 @@ public class Human {
 
     private static final double WAYPOINT_THRESHOLD = 5.0;
 
-    // For targeting: temporary flag to reduce multiple monkeys targeting the exact same human in the same frame (optional enhancement)
-    private boolean isBeingTargetedThisFrame = false;
+   
+
+
 
     public Human(double startX, double startY, double speed, int health, int hitboxDiameter, boolean isCamo) {
         this.x = startX;
@@ -110,12 +111,4 @@ public class Human {
         return Math.sqrt(dx * dx + dy * dy);
     }
 
-    // --- Optional methods for more advanced overkill prevention ---
-    public boolean isBeingTargetedThisFrame() {
-        return isBeingTargetedThisFrame;
-    }
-
-    public void setBeingTargetedThisFrame(boolean beingTargetedThisFrame) {
-        this.isBeingTargetedThisFrame = beingTargetedThisFrame;
-    }
 }

@@ -42,10 +42,9 @@ public class GamePanel extends JPanel {
         mapCoordinates.add(new Point(800, 350));
         map = new Map(mapCoordinates);
         upgradePanel = new UpgradeGUI();
-        // activeExplosions = new ArrayList<>(); // REMOVED
 
         monkeys = new ArrayList<>();
-        monkeys.add(new MonkeyB(100, 120, 50, 30, 1));
+        monkeys.add(new MonkeyB(100, 120, 50, 80, 1));
         monkeys.add(new Monkey(300, 300, 1, 40, 1));
         monkeys.add(new MonkeyB(500, 300, 100, 35, 2));
 

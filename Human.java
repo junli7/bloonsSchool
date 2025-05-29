@@ -1,8 +1,11 @@
+
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.ArrayList;
+import java.awt.image.BufferedImage;
+import java.awt.Image;
 
 public class Human {
     private double x, y;
@@ -14,11 +17,11 @@ public class Human {
     private boolean slowed;
     private boolean reachedEnd;
 
+    private BufferedImage sprite;
+    private static final String HUMAN_NORMAL_SPRITE_PATH = "human_normal.png";
+    private static final String HUMAN_CAMO_SPRITE_PATH = "human_camo.png";
+
     private static final double WAYPOINT_THRESHOLD = 5.0;
-
-   
-
-
 
     public Human(double startX, double startY, double speed, int health, int hitboxDiameter, boolean isCamo) {
         this.x = startX;
@@ -30,19 +33,34 @@ public class Human {
         this.slowed = false;
         this.reachedEnd = false;
         this.currentPathIndex = 0;
+
+        updateSpriteVisual();
+    }
+
+    private void updateSpriteVisual() {
+        String spritePath = this.camo ? HUMAN_CAMO_SPRITE_PATH : HUMAN_NORMAL_SPRITE_PATH;
+        this.sprite = SpriteManager.getScaledSprite(spritePath, this.hitboxDiameter, this.hitboxDiameter);
     }
 
     public void draw(Graphics2D g2d) {
-        if (health > 10) g2d.setColor(Color.RED);
-        else if (health > 5) g2d.setColor(Color.BLUE);
-        else g2d.setColor(Color.GREEN);
+        Color baseColor;
+        if (health > 10) baseColor = Color.RED;
+        else if (health > 5) baseColor = Color.BLUE;
+        else baseColor = Color.GREEN;
 
         if (camo) {
-            g2d.setColor(new Color(g2d.getColor().getRed(), g2d.getColor().getGreen(), g2d.getColor().getBlue(), 100));
+            g2d.setColor(new Color(baseColor.getRed(), baseColor.getGreen(), baseColor.getBlue(), 100));
+        } else {
+            g2d.setColor(baseColor);
         }
         g2d.fillOval((int) (x - hitboxDiameter / 2.0), (int) (y - hitboxDiameter / 2.0), hitboxDiameter, hitboxDiameter);
-        if (camo) {
-            g2d.setColor(Color.DARK_GRAY); // Camo outline
+
+        if (sprite != null) {
+            g2d.drawImage(sprite, (int) (x - sprite.getWidth() / 2.0), (int) (y - sprite.getHeight() / 2.0), null);
+        }
+
+        if (camo && (sprite == null || sprite == SpriteManager.getSprite(""))) { // Check if placeholder is used
+            g2d.setColor(Color.DARK_GRAY);
             g2d.drawOval((int) (x - hitboxDiameter / 2.0), (int) (y - hitboxDiameter / 2.0), hitboxDiameter, hitboxDiameter);
         }
     }
@@ -83,9 +101,9 @@ public class Human {
         if (this.health < 0) {
             this.health = 0;
         }
+        // updateSpriteVisual(); // Uncomment if you have sprites for different health states
     }
 
-    // --- Getters and Setters ---
     public double getX() { return x; }
     public double getY() { return y; }
     public double getSpeed() { return speed; }
@@ -100,15 +118,10 @@ public class Human {
         return new Rectangle((int) (x - hitboxDiameter / 2.0), (int) (y - hitboxDiameter / 2.0), hitboxDiameter, hitboxDiameter);
     }
 
-    /**
-     * Calculates the distance from this human to a given waypoint.
-     * Used for tie-breaking when two humans are on the same path segment.
-     */
     public double getDistanceToWaypoint(Point waypoint) {
         if (waypoint == null) return Double.MAX_VALUE;
         double dx = waypoint.getX() - this.x;
         double dy = waypoint.getY() - this.y;
         return Math.sqrt(dx * dx + dy * dy);
     }
-
 }

@@ -2,59 +2,55 @@ import java.awt.Color;
 
 public class MonkeyB extends Monkey {
 
-    private double baseAoeRadius = 40.0;
+    public static final int COST = 150; // Cost to buy this monkey
+
+    private double baseAoeRadius = 60.0;
     private int baseDamage = 2;
 
-    // MonkeyB specific default values if needed, or they can inherit from Monkey's defaults
-    public static final double MONKEY_B_INITIAL_RANGE = 70.0;
-    public static final double MONKEY_B_INITIAL_HITBOX = 100.0;
+    public static final double monkeyBInitialRange = 80.0;
+    public static final double monkeyBInitialHitbox = 80.0; // Slightly larger hitbox visually
 
-    // Sprite Paths specific to MonkeyB
-    private static final String MONKEY_B_IDLE_SPRITE_PATH = "monkey_bomber_idle.png";
-    private static final String MONKEY_B_SHOOT_SPRITE_PATH = "monkey_bomber_shoot.png";
-    private static final String EXPLOSION_SPRITE_PATH = "human_normal.png"; // For projectile's explosion
+    private static final String monkeyBIDLE_SPRITE_PATH = "monkey_bomber_idle.png";
+    private static final String monkeyBSHOOT_SPRITE_PATH = "monkey_bomber_shoot.png";
+    private static final String EXPLOSION_SPRITE_PATH = "explosion_effect.png";
 
-    // MODIFIED CONSTRUCTOR
     public MonkeyB(int nx, int ny, int nlevel) {
-        super(nx, ny, nlevel); // Calls Monkey constructor, which sets default range/hitbox & loads default sprites
+        super(nx, ny, nlevel); // Calls Monkey constructor
 
-        // Override defaults for MonkeyB if they are different
-        this.range = MONKEY_B_INITIAL_RANGE + ((nlevel-1) * 4); // MonkeyB specific range scaling
-        this.hitbox = MONKEY_B_INITIAL_HITBOX;
+        // Override defaults for MonkeyB
+        this.range = monkeyBInitialRange + ((nlevel - 1) * 4);
+        this.hitbox = monkeyBInitialHitbox; // Set MonkeyB's specific hitbox
 
-        // Set MonkeyB's specific sprite paths
-        super.idleSpritePath = MONKEY_B_IDLE_SPRITE_PATH;
-        super.shootingSpritePath = MONKEY_B_SHOOT_SPRITE_PATH;
+        // Set MonkeyB's specific sprite paths AFTER super() and AFTER setting its hitbox
+        super.idleSpritePath = monkeyBIDLE_SPRITE_PATH;
+        super.shootingSpritePath = monkeyBSHOOT_SPRITE_PATH;
         super.loadSprites(); // Reload with MonkeyB's specific paths AND its new hitbox
 
         // MonkeyB specific properties
-        setColor(Color.DARK_GRAY, Color.BLACK); // Fallback color, projectile color
-        setProjectileRadius(20);
-        setProjectileSpeed(20);
-        setShootCooldown(1200);
-        this.canSeeCamo = true;
+        // setColor(Color.DARK_GRAY, Color.BLACK); // Less relevant if sprites are working
+        setProjectileRadius(20); // Projectile visual size
+        setProjectileSpeed(20.0); // Bombs are often slower
+        setShootCooldown(1200); // Slower fire rate for bombs
+        this.canSeeCamo = true; // Bomber can see camo by default (or make it an upgrade)
 
         this.projectileIsExplosive = true;
-        this.projectileExplosionVisualColor = new Color(255, 100, 0);
-        this.projectileExplosionVisualDuration = 25;
+        this.projectileExplosionVisualColor = new Color(255, 100, 0, 180); // Orange-Red, semi-transparent
+        this.projectileExplosionVisualDuration = 25; // Slightly longer explosion visual
         this.projectileExplosionSpritePath = EXPLOSION_SPRITE_PATH;
 
-        updateMonkeyBProperties();
+        updateMonkeyBProperties(); // Apply level-based damage and AoE
     }
 
     private void updateMonkeyBProperties() {
-        this.projectileDamage = this.baseDamage + (this.level - 1);
-        this.projectileAoeRadius = this.baseAoeRadius + ((this.level - 1) * 5);
+        this.projectileDamage = this.baseDamage + (this.level - 1); // Damage increases with level
+        this.projectileAoeRadius = this.baseAoeRadius + ((this.level - 1) * 5); // AoE increases
     }
 
     @Override
     public void upgrade() {
-        super.upgrade(); // This calls loadSprites() in Monkey.java after updating base stats
-        updateMonkeyBProperties(); // Update MonkeyB specific properties like AoE
+        super.upgrade(); // Calls Monkey's upgrade, which updates base stats and calls loadSprites()
+        updateMonkeyBProperties(); // Update MonkeyB specific properties like AoE radius and damage
 
-        // Note: super.upgrade() already calls loadSprites().
-        // If MonkeyB's sprite paths are correctly set (which they are in the constructor and not changed by upgrade),
-        // the sprites will be reloaded/rescaled correctly if the hitbox changed in super.upgrade().
-        // System.out.println("MonkeyB (" + x + "," + y + ") upgraded. Idle path: " + super.idleSpritePath);
+        System.out.println("MonkeyB upgraded. New AoE: " + this.projectileAoeRadius + ", Damage: " + this.projectileDamage);
     }
 }

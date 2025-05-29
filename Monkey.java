@@ -1,40 +1,39 @@
 import java.util.List;
 import java.util.ArrayList;
 import java.awt.*;
-import java.awt.geom.AffineTransform; // For rotation
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
 public class Monkey {
     protected int x;
     protected int y;
-    protected double range; // No longer a constructor parameter
-    protected double hitbox; // No longer a constructor parameter
+    protected double range;
+    protected double hitbox;
     protected int upgradeCost;
     protected int level;
     protected List<Projectile> projectiles;
-    protected Color monkeyColor = Color.ORANGE; // Fallback color
+    protected Color monkeyColor = Color.ORANGE;
 
-    // Default values for base Monkey
+    public static final int COST = 75;
+
     public static final double DEFAULT_INITIAL_RANGE = 80.0;
-    public static final double DEFAULT_INITIAL_HITBOX = 30.0;
+    public static final double DEFAULT_INITIAL_HITBOX = 50.0;
 
-    // Projectile specific properties
     protected Color projectileColor = Color.RED;
-    protected int projectileRadius = 5;
+    protected int projectileRadius = 10; // Visual radius of the projectile itself
     protected double projectileSpeed = 5.0;
     protected int projectileDamage;
     protected boolean projectileIsExplosive;
-    protected double projectileAoeRadius;
+    protected double projectileAoeRadius; // For explosive damage/effect area
     protected Color projectileExplosionVisualColor = Color.ORANGE;
     protected int projectileExplosionVisualDuration = 20;
-    protected String projectileExplosionSpritePath;
+    protected String projectileExplosionSpritePath; // Sprite for the explosion visual
 
     protected long lastShotTime = 0;
-    protected long shootCooldown = 500; // Milliseconds
+    protected long shootCooldown = 500;
     protected boolean isSelected = false;
     protected boolean canSeeCamo = false;
 
-    // Sprite and Animation Fields
     protected transient BufferedImage idleSprite;
     protected transient BufferedImage shootingSprite;
     protected String idleSpritePath = "monkey_base_idle.png";
@@ -42,34 +41,32 @@ public class Monkey {
 
     protected boolean isAnimatingShot = false;
     protected long shotAnimationEndTime = 0;
-    protected static final long SHOT_ANIMATION_DURATION_MS = 400; // 0.2 seconds
+    protected static final long SHOT_ANIMATION_DURATION_MS = 400;
 
     protected double lastShotAngleRadians = 0;
 
-    // MODIFIED CONSTRUCTOR: Removed nrange, nhitbox
     public Monkey(int nx, int ny, int nlevel) {
         this.x = nx;
         this.y = ny;
         this.level = nlevel;
 
-        // Initialize with defaults
-        this.range = DEFAULT_INITIAL_RANGE + ((nlevel -1) * 5); // Example: range increases slightly with initial level
-        this.hitbox = DEFAULT_INITIAL_HITBOX; // Hitbox might be more fixed initially
+        this.range = DEFAULT_INITIAL_RANGE + ((nlevel - 1) * 5);
+        this.hitbox = DEFAULT_INITIAL_HITBOX;
 
         this.projectiles = new ArrayList<>();
-        loadSprites(); // Load initial sprites based on current paths and default hitbox
+        loadSprites();
 
-        // Default projectile properties
-        this.monkeyColor = Color.ORANGE;
-        this.projectileColor = Color.RED;
-        this.projectileRadius = 5;
+        // Default projectile properties for a standard Monkey
+        this.monkeyColor = Color.ORANGE; // Fallback if sprites fail
+        this.projectileColor = Color.RED; // Fallback for projectile if its sprite fails
+        this.projectileRadius = 5; // Visual size of the dart/projectile
         this.projectileSpeed = 5.0;
-        this.projectileDamage = 1 + (this.level / 2);
-        this.projectileIsExplosive = false;
+        this.projectileDamage = 1 + (this.level / 2); // Standard monkey does damage
+        this.projectileIsExplosive = false; // Standard monkey is not explosive
         this.projectileAoeRadius = 0.0;
-        this.projectileExplosionVisualColor = Color.ORANGE;
-        this.projectileExplosionVisualDuration = 20;
-        this.projectileExplosionSpritePath = null;
+        this.projectileExplosionVisualColor = Color.ORANGE; // Not used if not explosive
+        this.projectileExplosionVisualDuration = 20;    // Not used if not explosive
+        this.projectileExplosionSpritePath = null;      // No explosion sprite if not explosive
 
         calculateUpgradeCost();
         if (this.level > 2) {
@@ -79,7 +76,7 @@ public class Monkey {
 
     protected void loadSprites() {
         int spriteSize = (int) this.hitbox;
-        if (spriteSize <= 0) spriteSize = 32;
+        if (spriteSize <= 0) spriteSize = (int) DEFAULT_INITIAL_HITBOX;
 
         if (this.idleSpritePath != null && !this.idleSpritePath.isEmpty()) {
             this.idleSprite = SpriteManager.getScaledSprite(this.idleSpritePath, spriteSize, spriteSize);
@@ -101,13 +98,12 @@ public class Monkey {
     public void upgrade() {
         this.level++;
         calculateUpgradeCost();
-        this.range += 5; // Example: range increases with each upgrade
-        // this.hitbox might also change for some upgrades, e.g. this.hitbox +=2;
+        this.range += 5;
         this.projectileSpeed += 0.1;
         this.shootCooldown = Math.max(100, this.shootCooldown - 20);
         this.projectileDamage = 1 + (this.level / 2);
 
-        loadSprites(); // Reload sprites in case hitbox changed
+        loadSprites();
 
         if (this.level > 2 && !this.canSeeCamo) {
             this.canSeeCamo = true;
@@ -133,7 +129,7 @@ public class Monkey {
             }
         } else {
             AffineTransform oldTransform = g2d.getTransform();
-            double rotationAngle = this.lastShotAngleRadians + Math.PI / 2.0; // For UP-facing sprites
+            double rotationAngle = this.lastShotAngleRadians + Math.PI / 2.0;
             g2d.rotate(rotationAngle, x, y);
             int spriteWidth = currentSprite.getWidth();
             int spriteHeight = currentSprite.getHeight();
@@ -173,8 +169,15 @@ public class Monkey {
             double currentHumanProgress = human.getCurrentPathIndex();
             if (mapPath != null && !mapPath.isEmpty() && human.getCurrentPathIndex() < mapPath.size()) {
                 Point nextWaypoint = mapPath.get(human.getCurrentPathIndex());
+                double totalDistToNextWaypoint = this.range; // Default if at first waypoint
+                if(human.getCurrentPathIndex() > 0) {
+                    Point prevWaypoint = mapPath.get(human.getCurrentPathIndex()-1);
+                    totalDistToNextWaypoint = prevWaypoint.distance(nextWaypoint);
+                }
+                if(totalDistToNextWaypoint == 0) totalDistToNextWaypoint = 1;
+
                 double distToWaypoint = human.getDistanceToWaypoint(nextWaypoint);
-                currentHumanProgress += (1.0 - Math.min(1.0, distToWaypoint / (this.range * 0.8) ) ); // Adjusted heuristic slightly
+                currentHumanProgress += (1.0 - Math.min(1.0, distToWaypoint / totalDistToNextWaypoint ));
             }
             if (currentHumanProgress > maxProgress) {
                 maxProgress = currentHumanProgress;
@@ -191,16 +194,27 @@ public class Monkey {
         this.lastShotAngleRadians = Math.atan2(deltaY, deltaX);
         this.isAnimatingShot = true;
         this.shotAnimationEndTime = System.currentTimeMillis() + SHOT_ANIMATION_DURATION_MS;
-        fireProjectile(target);
+        fireProjectile(target); // This will now call the updated fireProjectile
     }
 
+    /**
+     * Creates and fires a projectile at the target.
+     * This base version fires a non-slowing projectile.
+     * Subclasses (like MonkeyC) that fire slowing projectiles MUST override this method.
+     * @param target The Human to target.
+     */
     protected void fireProjectile(Human target) {
         if (target == null) return;
         Projectile newProjectile = new Projectile(
-                this.x, this.y, target, this.projectileSpeed, this.projectileRadius,
-                this.projectileColor, this.projectileDamage, this.projectileIsExplosive,
-                this.projectileAoeRadius, this.projectileExplosionVisualColor,
-                this.projectileExplosionVisualDuration, this.projectileExplosionSpritePath
+                this.x, this.y, target,
+                this.projectileSpeed, this.projectileRadius, this.projectileColor,
+                this.projectileDamage,
+                this.projectileIsExplosive, this.projectileAoeRadius,
+                this.projectileExplosionVisualColor, this.projectileExplosionVisualDuration,
+                this.projectileExplosionSpritePath,
+                // Default values for slowing parameters for base Monkey & MonkeyB (unless overridden)
+                false, // isSlowing
+                0      // slowDurationMillis
         );
         projectiles.add(newProjectile);
         lastShotTime = System.currentTimeMillis();
@@ -217,7 +231,6 @@ public class Monkey {
         return distanceSquared <= Math.pow(this.hitbox / 2.0, 2);
     }
 
-    // GETTERS
     public double getRange() { return range; }
     public double getHitbox() { return hitbox; }
     public int getX() { return x; }
@@ -228,22 +241,21 @@ public class Monkey {
     public boolean canDetectCamo() { return canSeeCamo; }
     public boolean isSelected() { return isSelected; }
 
-
-    // SETTERS
     public void setSelected(boolean selected) { this.isSelected = selected; }
-    public void setColor(Color m, Color p) { monkeyColor = m; projectileColor = p; } // Less relevant with sprites
+    public void setColor(Color m, Color p) { monkeyColor = m; projectileColor = p; }
     public void setProjectileSpeed(double s) { projectileSpeed = s > 0 ? s : this.projectileSpeed; }
     public void setProjectileRadius(int s) { projectileRadius = s > 0 ? s : this.projectileRadius; }
     public void setShootCooldown(long s) { shootCooldown = s > 0 ? s : this.shootCooldown; }
-
-    public void setRange(double newRange) {
-        if (newRange > 0) this.range = newRange;
-    }
+    public void setRange(double newRange) { if (newRange > 0) this.range = newRange; }
 
     public void setHitbox(double newHitbox) {
         if (newHitbox > 0) {
             this.hitbox = newHitbox;
-            loadSprites(); // Crucial: reload sprites if hitbox changes as scale depends on it
+            loadSprites();
         }
+    }
+    public void setPosition(int x, int y) {
+        this.x = x;
+        this.y = y;
     }
 }

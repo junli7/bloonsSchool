@@ -1,4 +1,3 @@
-
 import java.awt.*;
 
 public class UpgradeGUI {
@@ -7,24 +6,29 @@ public class UpgradeGUI {
     private static final int BUTTON_HEIGHT = 30;
     private static final int PADDING = 5;
 
-    private Color defaultButtonColor = new Color(0, 100, 0); // Dark Green
-    private Color hoverButtonColor = new Color(0, 150, 0); // Brighter Green
-    private Color disabledButtonColor = Color.GRAY;
-    private Color currentButtonColor;
+    // Define colors for the flat look
+    private Color defaultButtonColor = new Color(0, 100, 0);     // Dark Green (as before)
+    private Color hoverButtonColor = new Color(0, 150, 0);       // Brighter Green (as before)
+    private Color disabledButtonColor = new Color(120, 120, 120); // Darker Gray for disabled
+    private Color currentButtonColor; // Used for hover effect, now stores the actual color to draw
 
+    private Color buttonBorderColor = new Color(50, 50, 50); // Darker border for a subtle definition
+    private Color buttonTextColor = Color.WHITE;
 
     public UpgradeGUI() {
-        this.upgradeButtonBounds = new Rectangle(); // Will be updated in draw
-        this.currentButtonColor = defaultButtonColor;
+        this.upgradeButtonBounds = new Rectangle();
+        this.currentButtonColor = defaultButtonColor; // Initialize
     }
 
-    // Call this from GamePanel's mouseMoved if you want hover effects
     public void updateHover(int mouseX, int mouseY, Monkey selectedMonkey, GameState gameState) {
         if (selectedMonkey != null && selectedMonkey.isSelected() && upgradeButtonBounds.contains(mouseX, mouseY)) {
             if (gameState.canAfford(selectedMonkey.getUpgradeCost())) {
                 currentButtonColor = hoverButtonColor;
             } else {
-                currentButtonColor = disabledButtonColor; // Still hover, but show disabled
+                // Hovering over a disabled button, could use a slightly different disabled hover color
+                // For simplicity, we'll just use the standard disabled color,
+                // or a slightly lighter version of it.
+                currentButtonColor = new Color(150, 150, 150); // Lighter disabled hover
             }
         } else if (selectedMonkey != null && selectedMonkey.isSelected()){
              if (gameState.canAfford(selectedMonkey.getUpgradeCost())) {
@@ -33,57 +37,67 @@ public class UpgradeGUI {
                 currentButtonColor = disabledButtonColor;
             }
         } else {
-            currentButtonColor = defaultButtonColor; // Reset if not hovering or no monkey selected
+            // No monkey selected or mouse is not over the button area
+            currentButtonColor = defaultButtonColor; // Reset to default (will be overridden by disabled if needed)
         }
     }
 
 
     public void draw(Graphics2D g2d, Monkey selectedMonkey, GameState gameState) {
         if (selectedMonkey == null || !selectedMonkey.isSelected()) {
-            upgradeButtonBounds.setBounds(0,0,0,0); // Invalidate bounds
-            return; // Don't draw if no monkey is selected
+            upgradeButtonBounds.setBounds(0,0,0,0);
+            return;
         }
 
-        // Position the GUI, e.g., above the monkey
-        // Adjust yOffset to place it relative to the monkey's hitbox and level text
         int yOffset = (int) selectedMonkey.getHitbox() / 2 + g2d.getFontMetrics().getHeight() + PADDING * 3;
         int guiX = selectedMonkey.getX() - BUTTON_WIDTH / 2;
-        int guiY = Math.max(0, selectedMonkey.getY() - yOffset - BUTTON_HEIGHT); // Ensure not off-screen top
+        int guiY = Math.max(0, selectedMonkey.getY() - yOffset - BUTTON_HEIGHT);
 
         upgradeButtonBounds.setBounds(guiX, guiY, BUTTON_WIDTH, BUTTON_HEIGHT);
 
-        // Determine button color based on affordability
-        Color actualButtonColor = currentButtonColor; // Use hover/default color
-        if (!gameState.canAfford(selectedMonkey.getUpgradeCost())) {
-            if (currentButtonColor != hoverButtonColor) { // If not hovering, use disabled color
-                 actualButtonColor = disabledButtonColor;
-            }
-            // if hovering over a disabled button, hover logic in updateHover already sets it
+        // Determine the final button color to draw based on state
+        Color finalDrawColor;
+        boolean canAfford = gameState.canAfford(selectedMonkey.getUpgradeCost());
+
+        if (upgradeButtonBounds.contains(MouseInfo.getPointerInfo().getLocation().x - g2d.getClipBounds().x, // Adjust for panel location on screen if necessary
+                                        MouseInfo.getPointerInfo().getLocation().y - g2d.getClipBounds().y)) { // Or pass mouseX, mouseY if available
+            finalDrawColor = canAfford ? hoverButtonColor : new Color(150, 150, 150); // Hover color or disabled hover
+        } else {
+            finalDrawColor = canAfford ? defaultButtonColor : disabledButtonColor; // Default or disabled
         }
 
 
-        // Draw button background
-        g2d.setColor(actualButtonColor);
+        // --- Draw Button Background (Flat Style) ---
+        g2d.setColor(finalDrawColor);
         g2d.fillRect(upgradeButtonBounds.x, upgradeButtonBounds.y, upgradeButtonBounds.width, upgradeButtonBounds.height);
 
-        // Draw button border
-        g2d.setColor(Color.LIGHT_GRAY);
+        // --- Draw Button Border (Optional, for definition) ---
+        // You can disable this if you want a completely borderless flat look.
+        g2d.setColor(buttonBorderColor); // Use a defined border color
         g2d.drawRect(upgradeButtonBounds.x, upgradeButtonBounds.y, upgradeButtonBounds.width, upgradeButtonBounds.height);
+        // For no border, comment out the two lines above.
 
-        // Draw text
-        g2d.setColor(Color.WHITE);
+        // --- Draw Button Text ---
+        g2d.setColor(buttonTextColor); // Use defined text color
         String text = "Upgrade (L" + (selectedMonkey.getLevel() + 1) + ")";
-        FontMetrics fm = g2d.getFontMetrics();
+        FontMetrics fm = g2d.getFontMetrics(); // Use existing font metrics
         int textWidth = fm.stringWidth(text);
-        g2d.drawString(text, guiX + (BUTTON_WIDTH - textWidth) / 2, guiY + fm.getAscent() + (BUTTON_HEIGHT - fm.getHeight()) / 2);
+        // Center text
+        int textX = upgradeButtonBounds.x + (upgradeButtonBounds.width - textWidth) / 2;
+        int textY = upgradeButtonBounds.y + fm.getAscent() + (upgradeButtonBounds.height - fm.getHeight()) / 2;
+        g2d.drawString(text, textX, textY);
 
-        // Draw cost below button
+        // --- Draw Cost Text ---
         String costText = "Cost: " + selectedMonkey.getUpgradeCost();
-        int costTextWidth = fm.stringWidth(costText);
-        g2d.setColor(Color.YELLOW);
-        g2d.setFont(new Font("Arial", Font.BOLD, 12)); // Slightly smaller font for cost
-        g2d.drawString(costText, guiX + (BUTTON_WIDTH - costTextWidth) / 2, guiY + BUTTON_HEIGHT + fm.getAscent() + PADDING);
-        g2d.setFont(fm.getFont()); // Reset font
+        // Use a slightly different font or color for cost if desired
+        Font costFont = new Font("Arial", Font.BOLD, 12); // Re-declare or ensure it's available
+        g2d.setFont(costFont);
+        FontMetrics costFm = g2d.getFontMetrics();
+        int costTextWidth = costFm.stringWidth(costText);
+        g2d.setColor(Color.YELLOW); // Or another contrasting color
+        g2d.drawString(costText, guiX + (BUTTON_WIDTH - costTextWidth) / 2, guiY + BUTTON_HEIGHT + costFm.getAscent() + PADDING);
+
+        g2d.setFont(fm.getFont()); // Reset font to what it was before drawing cost text
     }
 
     public boolean handleClick(int clickX, int clickY, Monkey selectedMonkey, GameState gameState) {
@@ -91,15 +105,13 @@ public class UpgradeGUI {
             if (gameState.canAfford(selectedMonkey.getUpgradeCost())) {
                 gameState.spendMoney(selectedMonkey.getUpgradeCost());
                 selectedMonkey.upgrade();
-                // After upgrade, check affordability for the new button color state
-                updateHover(clickX, clickY, selectedMonkey, gameState); // To reset color if needed
-                return true; // Click handled, upgrade performed
+                // No need to explicitly call updateHover here for color, as draw will recalculate
+                return true;
             } else {
                 System.out.println("Cannot afford upgrade for monkey at ("+selectedMonkey.getX()+","+selectedMonkey.getY()+"). Cost: " + selectedMonkey.getUpgradeCost() + ", Money: " + gameState.getMoney());
-                // Optionally, add a sound effect or visual cue for "can't afford"
-                return true; // Click was on the button, but action was blocked
+                return true;
             }
         }
-        return false; // Click was not on the button or button not active
+        return false;
     }
 }

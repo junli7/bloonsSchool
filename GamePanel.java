@@ -44,9 +44,9 @@ public class GamePanel extends JPanel {
         upgradePanel = new UpgradeGUI();
 
         monkeys = new ArrayList<>();
-        monkeys.add(new MonkeyB(100, 120, 50, 80, 1));
-        monkeys.add(new Monkey(300, 300, 1, 40, 1));
-        monkeys.add(new MonkeyB(500, 300, 100, 35, 2));
+        monkeys.add(new MonkeyB(100, 100,  1));
+        monkeys.add(new Monkey(300, 300,  1));
+        monkeys.add(new MonkeyB(500, 300, 2));
 
         humans = new ArrayList<>();
         this.currentSpawnCooldown = baseSpawnCooldownTicks;
@@ -120,7 +120,7 @@ public class GamePanel extends JPanel {
                 if (map != null) {
                     double speed = 1.0 + random.nextDouble() * 1.0;
                     int health = 3 + gameState.getCurrentWave() + random.nextInt(3);
-                    int hitbox = 20 + random.nextInt(11);
+                    int hitbox = 50 + random.nextInt(5);
                     boolean isCamo = random.nextDouble() < chanceForCamoSpawn;
                     Human newHuman = map.spawnHuman(speed, health, hitbox, isCamo);
                     if (newHuman != null) {

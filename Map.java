@@ -9,15 +9,9 @@ public class Map {
     private ArrayList<Point> pathCoordinates;
 
     public Map(ArrayList<Point> coords) {
-        if (coords == null || coords.isEmpty()) {
-            System.err.println("Map initialized with no path coordinates! Creating a default path.");
-            this.pathCoordinates = new ArrayList<>();
-            // Example default path
-            this.pathCoordinates.add(new Point(0, 300));
-            this.pathCoordinates.add(new Point(750, 300));
-        } else {
+
             this.pathCoordinates = coords;
-        }
+        
     }
 
     public void draw(Graphics2D g2d) {

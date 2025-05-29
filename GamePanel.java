@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
-import java.awt.AlphaComposite; // For transparency
 
 public class GamePanel extends JPanel {
     private List<Monkey> monkeys;
@@ -15,15 +14,10 @@ public class GamePanel extends JPanel {
     private Monkey selectedMonkey = null;
     private UpgradeGUI upgradePanel;
     private GameState gameState;
-    private int gameTick;
     private Map map;
+    private Random random = new Random();
 
     private static final int MONEY_PER_POP = 5;
-    private int baseSpawnCooldownTicks = 100;
-    private int currentSpawnCooldown;
-    private int humansPerSpawn = 3;
-    private double chanceForCamoSpawn = 0.15;
-    private Random random = new Random();
 
     // --- Placement State ---
     private boolean isPlacingMonkey = false;
@@ -32,13 +26,20 @@ public class GamePanel extends JPanel {
     private boolean placementValid = false;
     private int placementMouseX, placementMouseY;
 
-    private static final double MIN_PATH_PLACEMENT_BUFFER = -20;
-    private static final double MONKEY_PLACEMENT_SEPARATION_BUFFER = -20;
+    // Buffer for placing monkeys near the path.
+    // Positive value = minimum distance from monkey hitbox edge to path visual edge.
+    private static final double MIN_PATH_PLACEMENT_BUFFER = -15; // e.g., monkey edge must be 5 units away from path edge
+
+    // Buffer for placing monkeys near other monkeys.
+    // 0: Hitboxes can touch.
+    // Positive (e.g., 5): Min 5 units of space between hitbox edges.
+    // Negative (e.g., -10): Can overlap by up to 10 units.
+    // Let's allow slight overlap or touching, as is common in these games.
+    private static final double MONKEY_PLACEMENT_SEPARATION_BUFFER = -10; // Allow hitboxes to overlap by 5 units
 
 
     public GamePanel(GameState gameState) {
         this.gameState = gameState;
-        gameTick = 0;
         setPreferredSize(new Dimension(800, 600));
         setBackground(Color.LIGHT_GRAY);
 
@@ -53,8 +54,9 @@ public class GamePanel extends JPanel {
 
         monkeys = new ArrayList<>();
         humans = new ArrayList<>();
-        this.currentSpawnCooldown = baseSpawnCooldownTicks;
 
+        initializeWaveDefinitions();
+        // ... (rest of constructor: mouse listeners, timer) ...
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
@@ -85,7 +87,7 @@ public class GamePanel extends JPanel {
                                     newMonkeyToPlace = new MonkeyB(clickX, clickY, 1);
                                     canAffordPlacement = true;
                                 }
-                            } else if (placingMonkeyType.equals("MonkeyC")) { // Add MonkeyC
+                            } else if (placingMonkeyType.equals("MonkeyC")) {
                                 cost = MonkeyC.COST;
                                 if (gameState.canAfford(cost)) {
                                     newMonkeyToPlace = new MonkeyC(clickX, clickY, 1);
@@ -93,23 +95,20 @@ public class GamePanel extends JPanel {
                                 }
                             }
 
-
                             if (canAffordPlacement && newMonkeyToPlace != null) {
                                 gameState.spendMoney(cost);
                                 monkeys.add(newMonkeyToPlace);
-                                System.out.println("Placed " + placingMonkeyType + " at " + clickX + "," + clickY);
                                 cancelPlacingMonkey();
                             } else if (!canAffordPlacement){
-                                System.out.println("Cannot afford " + placingMonkeyType + " at placement time. Cost: " + cost);
+                                System.out.println("Cannot afford " + placingMonkeyType + ". Cost: " + cost);
                             }
                         } else {
-                            System.out.println("Invalid placement location for " + placingMonkeyType);
+                             System.out.println("Invalid placement for " + placingMonkeyType);
                         }
                         repaint();
                         return;
                     }
                 }
-
 
                 if (selectedMonkey != null && selectedMonkey.isSelected()) {
                     if (upgradePanel.handleClick(clickX, clickY, selectedMonkey, gameState)) {
@@ -149,7 +148,6 @@ public class GamePanel extends JPanel {
             public void mouseMoved(MouseEvent e) {
                 placementMouseX = e.getX();
                 placementMouseY = e.getY();
-
                 if (isPlacingMonkey && placementPreviewMonkey != null) {
                     placementPreviewMonkey.setPosition(placementMouseX, placementMouseY);
                     placementValid = isValidPlacement(placementMouseX, placementMouseY,
@@ -157,12 +155,11 @@ public class GamePanel extends JPanel {
                 } else if (selectedMonkey != null && selectedMonkey.isSelected()) {
                     upgradePanel.updateHover(placementMouseX, placementMouseY, selectedMonkey, gameState);
                 } else {
-                    upgradePanel.updateHover(-1, -1, null, gameState);
+                     upgradePanel.updateHover(-1,-1,null,gameState); 
                 }
                 repaint();
             }
         });
-
 
         Timer gameLoopTimer = new Timer(16, ev -> {
             updateGame();
@@ -172,118 +169,225 @@ public class GamePanel extends JPanel {
         setFocusable(true);
         requestFocusInWindow();
     }
+    // ... (initializeWaveDefinitions, startNextWave, etc.) ...
 
-    public void startPlacingMonkey(String type) {
-        if (this.selectedMonkey != null) {
-            this.selectedMonkey.setSelected(false);
-            this.selectedMonkey = null;
-        }
-        upgradePanel.updateHover(-1, -1, null, gameState);
+    private void initializeWaveDefinitions() {
+        this.waveDefinitions = new ArrayList<>();
+        // Wave 1: Babies
+        List<SpawnInstruction> wave1 = new ArrayList<>();
+        wave1.add(new SpawnInstruction("baby", 10, 0, 30, false));
+        waveDefinitions.add(new WaveDefinition(wave1));
 
-        this.isPlacingMonkey = true;
-        this.placingMonkeyType = type;
-        this.placementPreviewMonkey = null;
+        // Wave 2: More Babies, some Kids
+        List<SpawnInstruction> wave2 = new ArrayList<>();
+        wave2.add(new SpawnInstruction("baby", 15, 0, 25, false));
+        wave2.add(new SpawnInstruction("kid", 5, 60, 40, false));
+        waveDefinitions.add(new WaveDefinition(wave2));
 
-        int costToCheck = 0;
-        if (type.equals("Monkey")) costToCheck = Monkey.COST;
-        else if (type.equals("MonkeyB")) costToCheck = MonkeyB.COST;
-        else if (type.equals("MonkeyC")) costToCheck = MonkeyC.COST; // Add MonkeyC
+        // Wave 3: Kids and some Camo Babies
+        List<SpawnInstruction> wave3 = new ArrayList<>();
+        wave3.add(new SpawnInstruction("kid", 10, 0, 30, false));
+        wave3.add(new SpawnInstruction("baby", 10, 50, 20, true));
+        waveDefinitions.add(new WaveDefinition(wave3));
 
-        if (!gameState.canAfford(costToCheck)) {
-             System.out.println("Cannot afford to start placing " + type + ". Cost: " + costToCheck);
-             cancelPlacingMonkey();
-             return;
-        }
+        // Wave 4: Normals
+        List<SpawnInstruction> wave4 = new ArrayList<>();
+        wave4.add(new SpawnInstruction("normal", 8, 0, 50, false));
+        wave4.add(new SpawnInstruction("kid", 10, 40, 25, false));
+        waveDefinitions.add(new WaveDefinition(wave4));
 
-        switch (type) {
-            case "Monkey":
-                placementPreviewMonkey = new Monkey(placementMouseX, placementMouseY, 1);
-                break;
-            case "MonkeyB":
-                placementPreviewMonkey = new MonkeyB(placementMouseX, placementMouseY, 1);
-                break;
-            case "MonkeyC": // Add MonkeyC
-                placementPreviewMonkey = new MonkeyC(placementMouseX, placementMouseY, 1);
-                break;
-            default:
-                System.err.println("Unknown monkey type to place: " + type);
-                cancelPlacingMonkey();
-                return;
-        }
+        // Wave 5: Businessman mix
+        List<SpawnInstruction> wave5 = new ArrayList<>();
+        wave5.add(new SpawnInstruction("businessman", 5, 0, 60, false));
+        wave5.add(new SpawnInstruction("normal", 10, 30, 30, true));
+        waveDefinitions.add(new WaveDefinition(wave5));
 
-        if (placementPreviewMonkey != null) {
-             placementPreviewMonkey.setPosition(placementMouseX, placementMouseY);
-             placementValid = isValidPlacement(placementMouseX, placementMouseY,
-                                           placementPreviewMonkey.getHitbox(), placementPreviewMonkey.getRange());
-        }
-        repaint();
+        // Wave 6: Bodybuilders appear
+        List<SpawnInstruction> wave6 = new ArrayList<>();
+        wave6.add(new SpawnInstruction("bodybuilder", 3, 0, 100, false));
+        wave6.add(new SpawnInstruction("businessman", 7, 60, 40, false));
+        wave6.add(new SpawnInstruction("kid", 15, 40, 20, true));
+        waveDefinitions.add(new WaveDefinition(wave6));
+
+        // Wave 7: Dense wave
+        List<SpawnInstruction> wave7 = new ArrayList<>();
+        wave7.add(new SpawnInstruction("normal", 20, 0, 15, false));
+        wave7.add(new SpawnInstruction("bodybuilder", 2, 30, 80, true));
+        waveDefinitions.add(new WaveDefinition(wave7));
+
+        // Wave 8: Camo heavy
+        List<SpawnInstruction> wave8 = new ArrayList<>();
+        wave8.add(new SpawnInstruction("businessman", 10, 0, 30, true));
+        wave8.add(new SpawnInstruction("kid", 20, 20, 15, true));
+        waveDefinitions.add(new WaveDefinition(wave8));
+
+        // Wave 9: Boss Baby preview
+        List<SpawnInstruction> wave9 = new ArrayList<>();
+        wave9.add(new SpawnInstruction("bodybuilder", 5, 0, 60, false));
+        wave9.add(new SpawnInstruction("bossbaby", 1, 120, 0, false));
+        wave9.add(new SpawnInstruction("normal", 15, 30, 20, true));
+        waveDefinitions.add(new WaveDefinition(wave9));
+
+        // Wave 10: The End (of predefined)
+        List<SpawnInstruction> wave10 = new ArrayList<>();
+        wave10.add(new SpawnInstruction("bossbaby", 2, 0, 180, true));
+        wave10.add(new SpawnInstruction("bodybuilder", 8, 60, 40, true));
+        wave10.add(new SpawnInstruction("businessman", 10, 30, 25, true));
+        waveDefinitions.add(new WaveDefinition(wave10));
     }
 
-    public void cancelPlacingMonkey() {
-        isPlacingMonkey = false;
-        placingMonkeyType = null;
-        placementPreviewMonkey = null;
-        placementValid = false;
+    public boolean canStartNextWave() {
+        return !waveSpawningPhaseActive && humans.isEmpty();
     }
 
-    private boolean isValidPlacement(int x, int y, double newMonkeyHitbox, double newMonkeyRange) {
-        double newMonkeyRadius = newMonkeyHitbox / 2.0;
-
-        if (x - newMonkeyRadius < 0 || x + newMonkeyRadius > getWidth() ||
-            y - newMonkeyRadius < 0 || y + newMonkeyRadius > getHeight()) {
-            return false;
+    public void startNextWave() {
+        if (!canStartNextWave() && gameState.getCurrentWave() > 0) {
+            System.out.println("Cannot start wave " + (gameState.getCurrentWave() +1) + " yet.");
+            return;
         }
 
-        for (Monkey m : monkeys) {
-            double existingMonkeyRadius = m.getHitbox() / 2.0;
-            double distanceBetweenCenters = Math.sqrt(Math.pow(x - m.getX(), 2) + Math.pow(y - m.getY(), 2));
-            if (distanceBetweenCenters < (newMonkeyRadius + existingMonkeyRadius + MONKEY_PLACEMENT_SEPARATION_BUFFER)) {
-                return false;
+        gameState.incrementWave();
+        int waveToStart = gameState.getCurrentWave();
+        System.out.println("Starting wave " + waveToStart);
+
+        currentWaveSpawnInstructionIndex = 0;
+        unitsLeftToSpawnInCurrentInstruction = 0;
+        currentSpawnCooldownTicks = 0;
+        waveInProgress = true;
+        waveSpawningPhaseActive = true;
+
+        if (waveToStart > waveDefinitions.size()) {
+            if (lastProceduralWaveGenerated != waveToStart || currentProceduralWaveDefinition == null) {
+                generateProceduralWave(waveToStart);
+                lastProceduralWaveGenerated = waveToStart;
             }
         }
+        loadNextSpawnInstruction();
+    }
+    private WaveDefinition currentProceduralWaveDefinition;
+    private int lastProceduralWaveGenerated = 0;
 
-        if (map != null && map.getPath() != null && map.getPath().size() > 1) {
-            ArrayList<Point> pathPoints = map.getPath();
-            float pathVisualThickness = 20f;
-            double minDistanceToPathCenterline = newMonkeyRadius + (pathVisualThickness / 2.0) + MIN_PATH_PLACEMENT_BUFFER;
 
-            for (int i = 0; i < pathPoints.size() - 1; i++) {
-                Point p1 = pathPoints.get(i);
-                Point p2 = pathPoints.get(i + 1);
-                java.awt.geom.Line2D.Double pathSegment = new java.awt.geom.Line2D.Double(p1.getX(), p1.getY(), p2.getX(), p2.getY());
-                double distSqToSegmentCenterline = pathSegment.ptSegDistSq(x, y);
-                if (Math.sqrt(distSqToSegmentCenterline) < minDistanceToPathCenterline) {
-                    return false;
+    private WaveDefinition getCurrentActiveWaveDefinition() {
+        int currentWaveNum = gameState.getCurrentWave();
+        if (currentWaveNum <= 0) return null;
+
+        if (currentWaveNum <= waveDefinitions.size()) {
+            return waveDefinitions.get(currentWaveNum - 1);
+        } else {
+            return currentProceduralWaveDefinition;
+        }
+    }
+    
+    private int currentWaveSpawnInstructionIndex; 
+    private int unitsLeftToSpawnInCurrentInstruction;
+    private int currentSpawnCooldownTicks;      
+    private boolean waveInProgress = false;
+    private boolean waveSpawningPhaseActive = false;
+
+
+    private void loadNextSpawnInstruction() {
+        WaveDefinition activeWaveDef = getCurrentActiveWaveDefinition();
+        if (activeWaveDef == null || currentWaveSpawnInstructionIndex >= activeWaveDef.spawns.size()) {
+            waveSpawningPhaseActive = false;
+            System.out.println("All spawn instructions for wave " + gameState.getCurrentWave() + " completed.");
+            return;
+        }
+
+        SpawnInstruction instruction = activeWaveDef.spawns.get(currentWaveSpawnInstructionIndex);
+        unitsLeftToSpawnInCurrentInstruction = instruction.count;
+        currentSpawnCooldownTicks = instruction.delayTicksAfterPreviousGroup;
+    }
+
+
+    private void updateWaveSpawning() {
+        if (!waveSpawningPhaseActive) {
+            if (waveInProgress && humans.isEmpty()) {
+                System.out.println("Wave " + gameState.getCurrentWave() + " cleared of humans.");
+                waveInProgress = false;
+            }
+            return;
+        }
+
+        if (currentSpawnCooldownTicks > 0) {
+            currentSpawnCooldownTicks--;
+            return;
+        }
+
+        WaveDefinition activeWaveDef = getCurrentActiveWaveDefinition();
+        if (activeWaveDef == null) {
+             waveSpawningPhaseActive = false; return;
+        }
+
+        if (unitsLeftToSpawnInCurrentInstruction <= 0) {
+            currentWaveSpawnInstructionIndex++;
+            loadNextSpawnInstruction();
+            if(!waveSpawningPhaseActive || currentSpawnCooldownTicks > 0) return;
+        }
+        
+        if (currentWaveSpawnInstructionIndex < activeWaveDef.spawns.size()) {
+            SpawnInstruction currentInstruction = activeWaveDef.spawns.get(currentWaveSpawnInstructionIndex);
+
+            if (map != null && unitsLeftToSpawnInCurrentInstruction > 0) {
+                Human newHuman = map.spawnHumanByType(currentInstruction.humanType, currentInstruction.isCamo);
+                if (newHuman != null) {
+                    humans.add(newHuman);
+                }
+                unitsLeftToSpawnInCurrentInstruction--;
+
+                if (unitsLeftToSpawnInCurrentInstruction > 0) {
+                    currentSpawnCooldownTicks = currentInstruction.intervalTicksPerUnit;
+                } else {
+                    currentSpawnCooldownTicks = 0;
                 }
             }
+        } else {
+            waveSpawningPhaseActive = false;
         }
-        return true;
     }
 
 
-    private void trySpawnHumans() {
-        currentSpawnCooldown--;
-        if (currentSpawnCooldown <= 0) {
-            for (int i = 0; i < humansPerSpawn; i++) {
-                if (map != null) {
-                    double speed = 1.0 + random.nextDouble() * 1.0;
-                    int health = 3 + gameState.getCurrentWave() + random.nextInt(3);
-                    int hitbox = 50 + random.nextInt(5);
-                    boolean isCamo = random.nextDouble() < chanceForCamoSpawn;
-                    Human newHuman = map.spawnHuman(speed, health, hitbox, isCamo);
-                    if (newHuman != null) {
-                        humans.add(newHuman);
-                    }
-                }
+    private void generateProceduralWave(int waveNum) {
+        List<SpawnInstruction> spawns = new ArrayList<>();
+        int difficultyFactor = waveNum - waveDefinitions.size();
+
+        int numGroups = Math.min(8, 2 + difficultyFactor + random.nextInt(2));
+
+        String[] availableTypes = {"baby", "kid", "normal", "bodybuilder", "businessman", "bossbaby"};
+
+        for (int i = 0; i < numGroups; i++) {
+            String type;
+            int typeRoll = random.nextInt(100) + difficultyFactor * 2;
+
+            if (typeRoll > 100 && difficultyFactor > 1) type = "bossbaby";
+            else if (typeRoll > 85) type = "bodybuilder";
+            else if (typeRoll > 70) type = "businessman";
+            else if (typeRoll > 50) type = "normal";
+            else if (typeRoll > 25) type = "kid";
+            else type = "baby";
+            
+            if (type.equals("bossbaby") && (difficultyFactor < 3 || random.nextInt(difficultyFactor) < 2) && i < numGroups / 2) {
+                type = "bodybuilder";
             }
-            currentSpawnCooldown = baseSpawnCooldownTicks - (gameState.getCurrentWave() * 5);
-            if (currentSpawnCooldown < 30) currentSpawnCooldown = 30;
+
+            int count = 1 + random.nextInt(2 + difficultyFactor / 2) + difficultyFactor / 3;
+            count = Math.min(type.equals("bossbaby") ? (2 + difficultyFactor/3) : 15, count);
+
+            int delayAfterPrevious = Math.max(10, 100 - difficultyFactor * 8);
+            int intervalPerUnit = Math.max(5, 35 - difficultyFactor * 2);
+            boolean camo = random.nextDouble() < (0.15 + difficultyFactor * 0.07);
+
+            spawns.add(new SpawnInstruction(type, count, i == 0 ? 0 : delayAfterPrevious, intervalPerUnit, camo));
         }
+        this.currentProceduralWaveDefinition = new WaveDefinition(spawns);
+        System.out.println("Generated procedural wave " + waveNum + " with " + spawns.size() + " groups.");
     }
+
 
     private void updateGame() {
-        gameTick++;
-        trySpawnHumans();
+        if (waveSpawningPhaseActive || waveInProgress) {
+            updateWaveSpawning();
+        }
 
         for (Monkey m : monkeys) {
             m.updateAndTarget(getWidth(), getHeight(), humans, map.getPath());
@@ -292,13 +396,13 @@ public class GamePanel extends JPanel {
         Iterator<Human> humanIterator = humans.iterator();
         while (humanIterator.hasNext()) {
             Human h = humanIterator.next();
-            h.update(map.getPath()); // Human update now handles slow effect reverting
+            h.update(map.getPath());
             if (!h.isAlive()) {
                 gameState.incrementBloonsKilled(1);
-                gameState.addMoney(MONEY_PER_POP + (h.isCamo() ? 2 : 0));
+                gameState.addMoney(MONEY_PER_POP + (h.isCamo() ? 2 : 0) + (h.getType().equals("bossbaby") ? 50 : 0));
                 humanIterator.remove();
             } else if (h.hasReachedEnd()) {
-                System.out.println("Human reached end! Lives would be lost.");
+                System.out.println("Human of type " + h.getType() + " reached end! Lives would be lost.");
                 humanIterator.remove();
             }
         }
@@ -325,7 +429,6 @@ public class GamePanel extends JPanel {
 
         if (isPlacingMonkey && placementPreviewMonkey != null) {
             Graphics2D g2dCopy = (Graphics2D) g2d.create();
-
             AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.6f);
             g2dCopy.setComposite(ac);
             placementPreviewMonkey.draw(g2dCopy);
@@ -341,9 +444,9 @@ public class GamePanel extends JPanel {
             g2dCopy.setColor(validityColorBorder);
             g2dCopy.drawOval(placementPreviewMonkey.getX() - previewRange, placementPreviewMonkey.getY() - previewRange,
                          previewRange * 2, previewRange * 2);
-
+            
             int previewHitbox = (int) placementPreviewMonkey.getHitbox();
-            Color hitboxOutlineColor = placementValid ? new Color(0,150,0, 200) : new Color(150,0,0, 200);
+             Color hitboxOutlineColor = placementValid ? new Color(0,150,0, 200) : new Color(150,0,0, 200);
             g2dCopy.setColor(hitboxOutlineColor);
             g2dCopy.drawOval(placementPreviewMonkey.getX() - previewHitbox/2, placementPreviewMonkey.getY() - previewHitbox/2,
                          previewHitbox, previewHitbox);
@@ -351,8 +454,124 @@ public class GamePanel extends JPanel {
             g2dCopy.dispose();
         }
     }
+    
+    public void startPlacingMonkey(String type) {
+        if (this.selectedMonkey != null) {
+            this.selectedMonkey.setSelected(false);
+            this.selectedMonkey = null;
+        }
+        upgradePanel.updateHover(-1, -1, null, gameState);
 
-    public void setBaseSpawnCooldownTicks(int ticks) { if (ticks > 0) this.baseSpawnCooldownTicks = ticks; }
-    public void setHumansPerSpawn(int count) { if (count > 0) this.humansPerSpawn = count; }
-    public void setChanceForCamoSpawn(double chance) { if (chance >= 0.0 && chance <= 1.0) this.chanceForCamoSpawn = chance; }
+        this.isPlacingMonkey = true;
+        this.placingMonkeyType = type;
+        this.placementPreviewMonkey = null;
+
+        int costToCheck = 0;
+        if (type.equals("Monkey")) costToCheck = Monkey.COST;
+        else if (type.equals("MonkeyB")) costToCheck = MonkeyB.COST;
+        else if (type.equals("MonkeyC")) costToCheck = MonkeyC.COST;
+
+        if (!gameState.canAfford(costToCheck)) {
+             System.out.println("Cannot afford " + type + ". Cost: " + costToCheck);
+             cancelPlacingMonkey();
+             return;
+        }
+
+        switch (type) {
+            case "Monkey":
+                placementPreviewMonkey = new Monkey(placementMouseX, placementMouseY, 1);
+                break;
+            case "MonkeyB":
+                placementPreviewMonkey = new MonkeyB(placementMouseX, placementMouseY, 1);
+                break;
+            case "MonkeyC":
+                placementPreviewMonkey = new MonkeyC(placementMouseX, placementMouseY, 1);
+                break;
+            default:
+                cancelPlacingMonkey();
+                return;
+        }
+        if (placementPreviewMonkey != null) {
+             placementPreviewMonkey.setPosition(placementMouseX, placementMouseY);
+             placementValid = isValidPlacement(placementMouseX, placementMouseY,
+                                           placementPreviewMonkey.getHitbox(), placementPreviewMonkey.getRange());
+        }
+        repaint();
+    }
+
+    public void cancelPlacingMonkey() {
+        isPlacingMonkey = false;
+        placingMonkeyType = null;
+        placementPreviewMonkey = null;
+        placementValid = false;
+    }
+
+    private boolean isValidPlacement(int x, int y, double newMonkeyHitbox, double newMonkeyRange) {
+        double newMonkeyRadius = newMonkeyHitbox / 2.0;
+
+        // Check bounds
+        if (x - newMonkeyRadius < 0 || x + newMonkeyRadius > getWidth() ||
+            y - newMonkeyRadius < 0 || y + newMonkeyRadius > getHeight()) {
+            return false;
+        }
+
+        // Check collision with other monkeys
+        for (Monkey m : monkeys) {
+            double existingMonkeyRadius = m.getHitbox() / 2.0;
+            double distanceBetweenCenters = Math.sqrt(Math.pow(x - m.getX(), 2) + Math.pow(y - m.getY(), 2));
+            
+            // Minimum distance required between centers = sum of radii + separation buffer.
+            // If the actual distance is less than this minimum, it's an invalid placement.
+            double minimumCenterDistance = newMonkeyRadius + existingMonkeyRadius + MONKEY_PLACEMENT_SEPARATION_BUFFER;
+            
+            if (distanceBetweenCenters < minimumCenterDistance) {
+                return false;
+            }
+        }
+
+        // Check collision with path (cannot place ON the path)
+        if (map != null && map.getPath() != null && !map.getPath().isEmpty()) {
+            ArrayList<Point> pathPoints = map.getPath();
+            float pathVisualThickness = 20f; 
+            
+            // Minimum distance from monkey's CENTER to path CENTERLINE
+            // = monkey's radius + half of path's visual thickness + buffer between path edge and monkey edge.
+            double minDistanceToPathCenterline = newMonkeyRadius + (pathVisualThickness / 2.0) + MIN_PATH_PLACEMENT_BUFFER;
+
+            for (int i = 0; i < pathPoints.size() - 1; i++) {
+                Point p1 = pathPoints.get(i);
+                Point p2 = pathPoints.get(i + 1);
+                java.awt.geom.Line2D.Double pathSegment = new java.awt.geom.Line2D.Double(p1.getX(), p1.getY(), p2.getX(), p2.getY());
+                // ptSegDist gives distance from point (x,y) to the line segment.
+                if (pathSegment.ptSegDist(x, y) < minDistanceToPathCenterline) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    // Static inner classes SpawnInstruction and WaveDefinition remain the same
+    private static class SpawnInstruction {
+        String humanType;
+        int count;
+        int delayTicksAfterPreviousGroup;
+        int intervalTicksPerUnit;
+        boolean isCamo;
+
+        public SpawnInstruction(String humanType, int count, int delayTicksAfterPreviousGroup, int intervalTicksPerUnit, boolean isCamo) {
+            this.humanType = humanType;
+            this.count = count;
+            this.delayTicksAfterPreviousGroup = delayTicksAfterPreviousGroup;
+            this.intervalTicksPerUnit = intervalTicksPerUnit;
+            this.isCamo = isCamo;
+        }
+    }
+
+    private static class WaveDefinition {
+        List<SpawnInstruction> spawns;
+        public WaveDefinition(List<SpawnInstruction> spawns) { this.spawns = spawns; }
+    }
+    private List<WaveDefinition> waveDefinitions;
+
 }

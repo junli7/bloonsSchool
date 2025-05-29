@@ -9,7 +9,7 @@ public class MonkeyC extends Monkey { // Assuming it extends Monkey, can also ex
     private static final String ICE_EXPLOSION_SPRITE_PATH = "ice_explosion_effect.png"; // Optional
 
     // Slowing specific properties
-    private int slowDurationMillis = 2000; // 2 seconds
+    private int slowDurationMillis = 1000; // 2 seconds
     private double baseAoeRadiusForSlow = 50.0; // If its slow is AoE
 
     public MonkeyC(int nx, int ny, int nlevel) {
@@ -48,26 +48,35 @@ public class MonkeyC extends Monkey { // Assuming it extends Monkey, can also ex
         // super.projectileIsSlowing = true;
         // super.projectileSlowDurationMillis = this.slowDurationMillis;
 
-        updateMonkeyCProperties();
     }
 
-    private void updateMonkeyCProperties() {
-        // Update AoE or slow duration based on level if needed
-        this.projectileAoeRadius = this.baseAoeRadiusForSlow + ((this.level -1) * 3);
-        if (this.level > 3) { // Example: camo detection at higher level
-            this.canSeeCamo = true;
-        }
-    }
+
 
     @Override
     public void upgrade() {
-        super.upgrade();
-        updateMonkeyCProperties();
+        this.level++;
+        calculateUpgradeCost();
+        this.slowDurationMillis+=2000;
+        this.range += 10;
+        this.projectileSpeed += 5;
+        this.shootCooldown = Math.max(100, this.shootCooldown - 20);
+        this.projectileAoeRadius+=100;
+        if (this.level > 3) { // Example: camo detection at higher level
+            this.canSeeCamo = true;
+        }
+        loadSprites();
+
+ 
+        System.out.println(this.getClass().getSimpleName() + " at (" + x + "," + y + ") upgraded to level " + this.level +
+                ". New range: " + this.range + ", Damage: " + this.projectileDamage +
+                ", Next upgrade cost: " + this.upgradeCost);
         // Example: increase slow duration or AoE with upgrades
         // this.slowDurationMillis += 200;
         System.out.println("MonkeyC upgraded. AoE Slow Radius: " + this.projectileAoeRadius);
     }
-
+    private void calculateUpgradeCost() {
+        this.upgradeCost = 50 + (this.level * 75);
+    }
     // We need to override fireProjectile to pass the slowing parameters
     @Override
     protected void fireProjectile(Human target) {

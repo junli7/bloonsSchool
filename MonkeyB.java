@@ -6,7 +6,7 @@ public class MonkeyB extends Monkey {
     public static final double monkeyBInitialHitbox = 60.0; 
     private static final String monkeyBIDLE_SPRITE_PATH = "monkey_bomber_idle.png";
     private static final String monkeyBSHOOT_SPRITE_PATH = "monkey_bomber_shoot.png";
-    private static final String EXPLOSION_SPRITE_PATH = "explosion_effect.png";
+    private static final String explosionSprite = "explosion_effect.png";
 
     public MonkeyB(int nx, int ny, int nlevel) {
         super(nx, ny, nlevel);
@@ -20,14 +20,14 @@ public class MonkeyB extends Monkey {
         this.projectileColor = Color.BLACK;
         this.projectileRadius = 8;
         this.projectileSpeed = 20.0;
-        this.shootCooldown = 2000; // 2 seconds cooldown
-        this.canSeeCamo = true;
+        this.shootCooldown = 2000;
+        this.canSeeCamo = false;
         this.projectileDamage = 20;
         this.projectileIsExplosive = true;
         this.projectileAoeRadius = 45.0;
         this.projectileExplosionVisualColor = new Color(255, 100, 0, 180);
         this.projectileExplosionVisualDuration = 25;
-        this.projectileExplosionSpritePath = EXPLOSION_SPRITE_PATH;
+        this.projectileExplosionSpritePath = explosionSprite;
         
         calculateUpgradeCost();
     }

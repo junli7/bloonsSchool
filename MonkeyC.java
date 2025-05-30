@@ -17,7 +17,6 @@ public class MonkeyC extends Monkey {
         super.shootingSpritePath = MONKEY_C_SHOOT_SPRITE_PATH;
         super.loadSprites();
 
-        // Initialize base stats
         this.projectileColor = new Color(100, 150, 255);
         this.projectileRadius = 7;
         this.projectileSpeed = 3.5;
@@ -34,14 +33,13 @@ public class MonkeyC extends Monkey {
     }
     
     public void applyMonkeyCArchetypeStats(String archetypeKey) {
-        if (archetypeKey.equals(ARCHETYPE_ICE_PERMAFROST)) {
+        if (archetypeKey.equals(archetypeICE_PERMAFROST)) {
             this.slowDurationMillis = (int)(this.slowDurationMillis * 2.5);
             this.shootCooldown = (long)(this.shootCooldown * 1.15);
             this.range*=2;
             this.canSeeCamo = true;
-        } else if (archetypeKey.equals(ARCHETYPE_ICE_BRITTLE)) {
+        } else if (archetypeKey.equals(archetypeICE_BRITTLE)) {
             this.projectileDamage = 10;
-            this.slowDurationMillis = (int)(this.slowDurationMillis * 0.8);
         }
     }
 

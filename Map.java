@@ -10,7 +10,7 @@ public class Map {
     public Map(ArrayList<Point> coords) {
         this.pathCoordinates = coords;
     }
-
+    //remove once derek drawsmap
     public void draw(Graphics2D g2d) {
         if (pathCoordinates == null || pathCoordinates.size() < 2) {
             return;

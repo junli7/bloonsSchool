@@ -1,25 +1,24 @@
 import java.awt.*;
 
 public class UpgradeGUI {
-    // --- Action constants for handleClick return value ---
-    public static final int ACTION_NONE = 0;
-    public static final int ACTION_UPGRADED_OR_ARCHETYPE_CHOSEN = 1;
-    public static final int ACTION_SOLD = 2;
+    public static final int actionNONE = 0;
+    public static final int actionUpgradedOrArchetypeChosen = 1;
+    public static final int actionSOLD = 2;
 
     private Rectangle upgradeButtonBounds;
     private Rectangle archetype1ButtonBounds;
     private Rectangle archetype2ButtonBounds;
     private Rectangle sellButtonBounds;
 
-    private static final int BUTTON_WIDTH = 140;
-    private static final int ARCHETYPE_BUTTON_WIDTH = 140;
-    private static final int SELL_BUTTON_WIDTH = 100;
-    private static final int BUTTON_HEIGHT = 30;
-    private static final int ARCHETYPE_BUTTON_HEIGHT = 35;
-    private static final int SELL_BUTTON_HEIGHT = 28;
-    private static final int PADDING = 5;
-    private static final int SECTION_SPACING = 10; 
-    private static final int TOOLTIP_SPACING_AFTER_SELL = 15; // Space between sell button and tooltip
+    private static final int buttonWidth = 140;
+    private static final int archetypebuttonWidth = 140;
+    private static final int sellbuttonWidth = 100;
+    private static final int buttonHeight = 30;
+    private static final int archetypebuttonHeight = 35;
+    private static final int sellbuttonHeight = 28;
+    private static final int padding = 5;
+    private static final int sectionSpacing = 10; 
+    private static final int tooltipSpacingAfterSell = 15;
 
     private Color defaultButtonColor = new Color(0, 100, 0);
     private Color hoverButtonColor = new Color(0, 150, 0);
@@ -81,9 +80,8 @@ public class UpgradeGUI {
         }
 
         boolean canAffordCurrentUpgrade = gameState.canAfford(selectedMonkey.getUpgradeCost());
-        boolean hoverOnAnyButton = false; // Flag to manage tooltip priority
+        boolean hoverOnAnyButton = false;
 
-        // Sell button hover (highest priority for tooltip if hovered)
         if (sellButtonBounds.contains(mouseX, mouseY)) {
             currentSellButtonColor = hoverSellButtonColor;
             currentTooltipText = "Sell tower for $" + selectedMonkey.getSellValue();
@@ -129,7 +127,6 @@ public class UpgradeGUI {
             currentArchetype2Color = disabledButtonColor;
         }
         
-        // If no button is hovered that provides a tooltip, clear it
         if (!hoverOnAnyButton) {
             currentTooltipText = "";
         }
@@ -143,10 +140,9 @@ public class UpgradeGUI {
         int costForThisUpgrade = selectedMonkey.getUpgradeCost();
         boolean canAffordUpgrade = gameState.canAfford(costForThisUpgrade);
 
-        int currentY = PADDING * 2; 
+        int currentY = padding * 2; 
         int centerX = panelWidth / 2;
 
-        // --- Header ---
         g2d.setColor(Color.BLACK);
         g2d.setFont(this.headerFont);
         FontMetrics headerFm = g2d.getFontMetrics();
@@ -161,20 +157,19 @@ public class UpgradeGUI {
         }
         int headerWidth = headerFm.stringWidth(headerText);
         g2d.drawString(headerText, centerX - headerWidth / 2, currentY + headerFm.getAscent());
-        currentY += headerFm.getHeight() + headerFm.getDescent() + PADDING * 2;
+        currentY += headerFm.getHeight() + headerFm.getDescent() + padding * 2;
         
-        // --- Upgrade/Archetype Buttons & Cost ---
         if (selectedMonkey.getLevel() == 1 && !selectedMonkey.hasChosenArchetype()) {
             String[] archetypeKeys = selectedMonkey.getArchetypeChoices();
             if (archetypeKeys.length > 0) {
-                archetype1ButtonBounds.setBounds(centerX - ARCHETYPE_BUTTON_WIDTH / 2, currentY, ARCHETYPE_BUTTON_WIDTH, ARCHETYPE_BUTTON_HEIGHT);
+                archetype1ButtonBounds.setBounds(centerX - archetypebuttonWidth / 2, currentY, archetypebuttonWidth, archetypebuttonHeight);
                 drawSingleButton(g2d, selectedMonkey.archetypeKeyToString(archetypeKeys[0]), this.buttonFont, archetype1ButtonBounds, currentArchetype1Color, canAffordUpgrade);
-                currentY += ARCHETYPE_BUTTON_HEIGHT + PADDING;
+                currentY += archetypebuttonHeight + padding;
             }
             if (archetypeKeys.length > 1) {
-                archetype2ButtonBounds.setBounds(centerX - ARCHETYPE_BUTTON_WIDTH / 2, currentY, ARCHETYPE_BUTTON_WIDTH, ARCHETYPE_BUTTON_HEIGHT);
+                archetype2ButtonBounds.setBounds(centerX - archetypebuttonWidth / 2, currentY, archetypebuttonWidth, archetypebuttonHeight);
                 drawSingleButton(g2d, selectedMonkey.archetypeKeyToString(archetypeKeys[1]), this.buttonFont, archetype2ButtonBounds, currentArchetype2Color, canAffordUpgrade);
-                currentY += ARCHETYPE_BUTTON_HEIGHT + PADDING;
+                currentY += archetypebuttonHeight + padding;
             }
 
             g2d.setFont(this.costFont);
@@ -183,12 +178,12 @@ public class UpgradeGUI {
             int costTextWidth = costFm.stringWidth(costText);
             g2d.setColor(canAffordUpgrade ? new Color(204,153,0) : Color.RED); 
             g2d.drawString(costText, centerX - costTextWidth / 2, currentY + costFm.getAscent());
-            currentY += costFm.getHeight() + costFm.getDescent() + PADDING;
+            currentY += costFm.getHeight() + costFm.getDescent() + padding;
 
         } else if (selectedMonkey.getLevel() < 10) { 
-            upgradeButtonBounds.setBounds(centerX - BUTTON_WIDTH / 2, currentY, BUTTON_WIDTH, BUTTON_HEIGHT);
+            upgradeButtonBounds.setBounds(centerX - buttonWidth / 2, currentY, buttonWidth, buttonHeight);
             drawSingleButton(g2d, "Upgrade (L" + (selectedMonkey.getLevel() + 1) + ")", this.buttonFont, upgradeButtonBounds, currentButtonColor, canAffordUpgrade);
-            currentY += BUTTON_HEIGHT + PADDING;
+            currentY += buttonHeight + padding;
             
             g2d.setFont(this.costFont);
             String costText = "Cost: " + costForThisUpgrade;
@@ -196,7 +191,7 @@ public class UpgradeGUI {
             int costTextWidth = costFm.stringWidth(costText);
             g2d.setColor(canAffordUpgrade ? new Color(204,153,0) : Color.RED);
             g2d.drawString(costText, centerX - costTextWidth / 2, currentY + costFm.getAscent());
-            currentY += costFm.getHeight() + costFm.getDescent() + PADDING;
+            currentY += costFm.getHeight() + costFm.getDescent() + padding;
         } else { 
             upgradeButtonBounds.setBounds(0,0,0,0); 
             archetype1ButtonBounds.setBounds(0,0,0,0);
@@ -208,46 +203,42 @@ public class UpgradeGUI {
             int textWidth = maxFm.stringWidth(maxLevelText);
             g2d.setColor(new Color(0, 80, 0)); 
             g2d.drawString(maxLevelText, centerX - textWidth/2, currentY + maxFm.getAscent());
-            currentY += maxFm.getHeight() + maxFm.getDescent() + PADDING;
+            currentY += maxFm.getHeight() + maxFm.getDescent() + padding;
         }
         
-        // --- Stats Display ---
-        currentY += SECTION_SPACING; 
+        currentY += sectionSpacing; 
         g2d.setColor(Color.DARK_GRAY);
         g2d.setFont(this.statsFont);
         FontMetrics statsFm = g2d.getFontMetrics();
-        int statsLeftMargin = PADDING * 3;
+        int statsLeftMargin = padding * 3;
 
         g2d.drawString("Damage: " + selectedMonkey.projectileDamage, statsLeftMargin, currentY + statsFm.getAscent());
-        currentY += statsFm.getHeight() + PADDING / 2;
+        currentY += statsFm.getHeight() + padding / 2;
         g2d.drawString("Range: " + String.format("%.1f", selectedMonkey.getRange()), statsLeftMargin, currentY + statsFm.getAscent());
-        currentY += statsFm.getHeight() + PADDING / 2;
+        currentY += statsFm.getHeight() + padding / 2;
         g2d.drawString("Cooldown: " + String.format("%.2f", selectedMonkey.shootCooldown / 1000.0) + "s", statsLeftMargin, currentY + statsFm.getAscent());
-        currentY += statsFm.getHeight() + PADDING / 2;
+        currentY += statsFm.getHeight() + padding / 2;
         if(selectedMonkey.projectileIsExplosive){
             g2d.drawString("AoE Radius: " + String.format("%.1f",selectedMonkey.projectileAoeRadius), statsLeftMargin, currentY + statsFm.getAscent());
-            currentY += statsFm.getHeight() + PADDING / 2;
+            currentY += statsFm.getHeight() + padding / 2;
         }
         if(selectedMonkey instanceof MonkeyC){ 
             g2d.drawString("Slow Dur: " + String.format("%.2f",((MonkeyC)selectedMonkey).slowDurationMillis/1000.0) + "s", statsLeftMargin, currentY + statsFm.getAscent());
-            currentY += statsFm.getHeight() + PADDING / 2;
+            currentY += statsFm.getHeight() + padding / 2;
         }
         g2d.drawString("Camo Detect: " + (selectedMonkey.canDetectCamo() ? "Yes" : "No"), statsLeftMargin, currentY + statsFm.getAscent());
-        currentY += statsFm.getHeight() + SECTION_SPACING; 
+        currentY += statsFm.getHeight() + sectionSpacing; 
 
-        // --- Sell Button ---
-        sellButtonBounds.setBounds(centerX - SELL_BUTTON_WIDTH / 2, currentY, SELL_BUTTON_WIDTH, SELL_BUTTON_HEIGHT);
+        sellButtonBounds.setBounds(centerX - sellbuttonWidth / 2, currentY, sellbuttonWidth, sellbuttonHeight);
         drawSingleButton(g2d, "Sell ($" + selectedMonkey.getSellValue() + ")", this.sellButtonFont, sellButtonBounds, currentSellButtonColor, true); 
-        currentY += SELL_BUTTON_HEIGHT + TOOLTIP_SPACING_AFTER_SELL; // Add space for tooltip after sell button
-
-        // --- Tooltip Display Area (MOVED TO BELOW SELL BUTTON) ---
+        currentY += sellbuttonHeight + tooltipSpacingAfterSell;
         if (!currentTooltipText.isEmpty()) {
             g2d.setFont(this.tooltipFont);
             FontMetrics tooltipFm = g2d.getFontMetrics();
             g2d.setColor(new Color(40,40,40)); 
             
-            int tooltipStartX = PADDING * 3; 
-            int tooltipContentWidth = panelWidth - (PADDING * 6); 
+            int tooltipStartX = padding * 3; 
+            int tooltipContentWidth = panelWidth - (padding * 6); 
             
             String[] words = currentTooltipText.split(" ");
             StringBuilder line = new StringBuilder();
@@ -265,10 +256,8 @@ public class UpgradeGUI {
             }
             if (line.length() > 0) { 
                 g2d.drawString(line.toString().trim(), tooltipStartX, currentY);
-                // currentY += tooltipFm.getHeight(); // No need to increment Y further for this section if it's the last
             }
         }
-        // currentY += SECTION_SPACING; // No need for spacing after tooltip if it's the last element
 
         g2d.setFont(originalFont); 
     }
@@ -290,10 +279,10 @@ public class UpgradeGUI {
     }
 
     public int handleClick(int clickX, int clickY, Monkey selectedMonkey, GameState gameState) {
-        if (selectedMonkey == null) return ACTION_NONE;
+        if (selectedMonkey == null) return actionNONE;
 
         if (sellButtonBounds.contains(clickX, clickY)) {
-            return ACTION_SOLD;
+            return actionSOLD;
         }
 
         int costForThisUpgrade = selectedMonkey.getUpgradeCost();
@@ -303,29 +292,29 @@ public class UpgradeGUI {
             if (archetypeKeys.length > 0 && archetype1ButtonBounds.contains(clickX, clickY)) {
                 if (gameState.canAfford(costForThisUpgrade)) {
                     selectedMonkey.selectArchetypeAndUpgrade(archetypeKeys[0], gameState);
-                    return ACTION_UPGRADED_OR_ARCHETYPE_CHOSEN;
+                    return actionUpgradedOrArchetypeChosen;
                 } else { System.out.println("Cannot afford " + selectedMonkey.archetypeKeyToString(archetypeKeys[0])); }
-                return ACTION_NONE; 
+                return actionNONE; 
             }
             if (archetypeKeys.length > 1 && archetype2ButtonBounds.contains(clickX, clickY)) {
                  if (gameState.canAfford(costForThisUpgrade)) {
                     selectedMonkey.selectArchetypeAndUpgrade(archetypeKeys[1], gameState);
-                    return ACTION_UPGRADED_OR_ARCHETYPE_CHOSEN;
+                    return actionUpgradedOrArchetypeChosen;
                 } else { System.out.println("Cannot afford " + selectedMonkey.archetypeKeyToString(archetypeKeys[1])); }
-                return ACTION_NONE; 
+                return actionNONE; 
             }
         } else if (selectedMonkey.getLevel() < 10) { 
             if (upgradeButtonBounds.contains(clickX, clickY)) {
                 if (gameState.canAfford(costForThisUpgrade)) {
                     gameState.spendMoney(costForThisUpgrade); 
                     selectedMonkey.upgrade(); 
-                    return ACTION_UPGRADED_OR_ARCHETYPE_CHOSEN;
+                    return actionUpgradedOrArchetypeChosen;
                 } else {
                     System.out.println("Cannot afford upgrade. Cost: " + costForThisUpgrade + ", Money: " + gameState.getMoney());
                 }
-                return ACTION_NONE; 
+                return actionNONE; 
             }
         }
-        return ACTION_NONE; 
+        return actionNONE; 
     }
 }

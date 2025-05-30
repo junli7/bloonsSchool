@@ -10,7 +10,7 @@ public class UpgradeControlPanel extends JPanel {
     private GameState gameState;
     private GamePanel gamePanel_ref;
 
-    public static final int PANEL_WIDTH = 190;
+    public static final int panelWidth = 190;
 
     public UpgradeControlPanel(GameState gameState) {
         this.gameState = gameState;
@@ -30,17 +30,15 @@ public class UpgradeControlPanel extends JPanel {
                 if (currentSelectedMonkey != null && isVisible()) {
                     int actionResult = upgradeGUI_instance.handleClick(e.getX(), e.getY(), currentSelectedMonkey, gameState);
                     
-                    if (actionResult == UpgradeGUI.ACTION_SOLD) {
+                    if (actionResult == UpgradeGUI.actionSOLD) {
                         if (gamePanel_ref != null) {
-                            gamePanel_ref.sellMonkey(currentSelectedMonkey); // GamePanel handles actual selling
+                            gamePanel_ref.sellMonkey(currentSelectedMonkey);
                         }
-                        // setSelectedMonkey(null); // GamePanel will call this when monkey is sold
-                        // setVisible(false);       // GamePanel will also hide this
-                    } else if (actionResult == UpgradeGUI.ACTION_UPGRADED_OR_ARCHETYPE_CHOSEN) {
-                        if (gamePanel_ref != null) gamePanel_ref.repaint(); // Repaint game for potential visual changes
-                        repaint(); // Repaint this panel for updated stats/buttons
+                       
+                    } else if (actionResult == UpgradeGUI.actionUpgradedOrArchetypeChosen) {
+                        if (gamePanel_ref != null) gamePanel_ref.repaint(); 
+                        repaint();
                     } else {
-                        // ACTION_NONE or failed upgrade, just repaint this panel for hover/tooltip updates
                         repaint();
                     }
                 }

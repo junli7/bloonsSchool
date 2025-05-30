@@ -38,39 +38,39 @@ public class Human {
         this.humanType = humanType;
 
         if ("baby".equalsIgnoreCase(humanType)) {
-            this.originalSpeed = 1.2;
-            this.health = 10;
-            this.hitboxDiameter = 30;
+            this.originalSpeed = 2.0;
+            this.health = 100;
+            this.hitboxDiameter = 40;
             this.currentSpriteVariants = List.of("human_baby.png");
             this.defaultCamoForType = false;
         } else if ("kid".equalsIgnoreCase(humanType)) {
             this.originalSpeed = 1.5;
-            this.health = 25;
-            this.hitboxDiameter = 35;
+            this.health = 250;
+            this.hitboxDiameter = 45;
             this.currentSpriteVariants = List.of("human_kid0.png", "human_kid1.png");
             this.defaultCamoForType = false;
         } else if ("normal".equalsIgnoreCase(humanType)) {
             this.originalSpeed = 1.0;
-            this.health = 50;
-            this.hitboxDiameter = 40;
+            this.health = 500;
+            this.hitboxDiameter = 50;
             this.currentSpriteVariants = List.of("human_normal0.png", "human_normal1.png", "human_normal2.png");
             this.defaultCamoForType = false;
         } else if ("bodybuilder".equalsIgnoreCase(humanType)) {
             this.originalSpeed = 0.8;
-            this.health = 150;
-            this.hitboxDiameter = 50;
+            this.health = 1500;
+            this.hitboxDiameter = 60;
             this.currentSpriteVariants = List.of("human_bodybuilder.png");
             this.defaultCamoForType = false;
         } else if ("businessman".equalsIgnoreCase(humanType)) {
             this.originalSpeed = 1.3;
-            this.health = 75;
-            this.hitboxDiameter = 40;
+            this.health = 750;
+            this.hitboxDiameter = 50;
             this.currentSpriteVariants = List.of("human_businessman.png");
             this.defaultCamoForType = false;
         } else if ("bossbaby".equalsIgnoreCase(humanType)) { // Consistent name: bossbaby
             this.originalSpeed = 0.7;
-            this.health = 300;
-            this.hitboxDiameter = 60;
+            this.health = 3000;
+            this.hitboxDiameter = 100;
             this.currentSpriteVariants = List.of("human_bigbaby.png"); // Sprite file is still human_bigbaby.png
             this.defaultCamoForType = false; // Bossbaby is NOT camo by default
         } else {

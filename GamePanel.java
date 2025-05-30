@@ -434,13 +434,7 @@ public class GamePanel extends JPanel {
         List<Monkey> monkeysToDraw = new ArrayList<>(monkeys);
         for (Monkey m : monkeysToDraw) {
             m.draw(g2d); 
-            if (m.isSelected()) { 
-                g2d.setColor(new Color(150, 150, 150, 100)); 
-                g2d.drawOval((int) (m.getX() - m.getRange()), 
-                             (int) (m.getY() - m.getRange()),
-                             (int) (m.getRange() * 2), 
-                             (int) (m.getRange() * 2));
-            }
+            
         }
 
         if (isPlacingMonkey && placementPreviewMonkey != null) {

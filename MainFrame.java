@@ -7,7 +7,7 @@ public class MainFrame {
             JFrame frame = new JFrame("johntig Tower Defense");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-            GameState gameState = new GameState(200);
+            GameState gameState = new GameState(2000);
 
             // Panel Dimensions (adjust as needed)
             int gamePanelNominalWidth = 800; // GamePanel will effectively take this space

@@ -29,8 +29,8 @@ public class Monkey {
     protected int projectileExplosionVisualDuration = 20;
     protected String projectileExplosionSpritePath;
 
-    protected long lastShotTime = 0;
-    protected long shootCooldown = 500;
+    protected double lastShotTime = 0;
+    protected double shootCooldown = 500;
     protected boolean isSelected = false;
     protected boolean canSeeCamo = false;
 
@@ -55,10 +55,8 @@ public class Monkey {
     protected String chosenArchetype = ARCHETYPE_NONE;
     protected boolean hasChosenArchetype = false;
 
-    // --- Sell Functionality Field ---
     protected int totalSpentOnMonkey;
     public static final double SELL_PERCENTAGE = 0.7; // Sell for 70% of total spent
-    // --- End Sell Functionality Field ---
 
     public Monkey(int nx, int ny, int nlevel) {
         this.x = nx;
@@ -75,7 +73,7 @@ public class Monkey {
         this.projectileColor = Color.RED;
         this.projectileRadius = 5;
         this.projectileSpeed = 5.0;
-        this.projectileDamage = 1;
+        this.projectileDamage = 10;
         this.projectileIsExplosive = false;
         this.projectileAoeRadius = 0.0;
 
@@ -174,19 +172,20 @@ public class Monkey {
     protected void applyArchetypeStats(String archetypeKey) {
         if (this.getClass() == Monkey.class) { 
             if (archetypeKey.equals(ARCHETYPE_DART_SNIPER)) {
-                this.range *= 1.8; 
-                this.shootCooldown = (long)(this.shootCooldown * 1.7); 
+                this.range *= 3; 
+                this.shootCooldown = (this.shootCooldown * 2.5); 
+                this.projectileSpeed+=10;
+                this.projectileDamage+=10;
             } else if (archetypeKey.equals(ARCHETYPE_DART_QUICKFIRE)) {
-                this.shootCooldown = (long)(this.shootCooldown * 0.4); 
-                this.projectileDamage += 1; 
-                this.range *= 0.75; 
+                this.shootCooldown = (this.shootCooldown * 0.3); 
+                this.projectileDamage += 10; 
             }
         } else if (this instanceof MonkeyB) {
             if (archetypeKey.equals(ARCHETYPE_BOMB_FRAGS)) {
-                this.projectileAoeRadius *= 1.6;
+                this.projectileAoeRadius *= 1.5;
             } else if (archetypeKey.equals(ARCHETYPE_BOMB_CONCUSSION)) {
-                this.projectileDamage += 3;
-                this.projectileAoeRadius *= 0.7;
+                this.projectileDamage += 20;
+                this.projectileAoeRadius *= 0.5;
                 this.shootCooldown = (long)(this.shootCooldown * 1.3);
             }
         }
@@ -232,13 +231,12 @@ public class Monkey {
         this.level++;
         calculateUpgradeCost(); 
 
-        this.range += 5;
-        this.projectileSpeed += 0.2;
-        this.shootCooldown = Math.max(100, this.shootCooldown - 25);
-
-        if (this.projectileDamage > 0) {
-            this.projectileDamage += 1;
-        }
+        this.range += 5; // Increase range by 5
+        this.projectileSpeed += 2;
+        this.shootCooldown = this.shootCooldown*0.9; // Decrease cooldown by 10%
+        
+        if(this.projectileDamage!=0)this.projectileDamage += 10;
+        
         if (this.level >= 3 && !this.canSeeCamo) {
             boolean grantedByArchetype = false; 
             if(this instanceof MonkeyC && ((MonkeyC)this).chosenArchetype.equals(ARCHETYPE_ICE_BRITTLE)){
@@ -256,11 +254,11 @@ public class Monkey {
 
 
     public void draw(Graphics2D g2d) {
-        // Range circle is drawn by GamePanel now if selected
-        // if (isSelected) {
-        //     g2d.setColor(new Color(150, 150, 150, 100));
-        //     g2d.fillOval((int) (x - range), (int) (y - range), (int) (range * 2), (int) (range * 2));
-        // }
+            // Range circle is drawn by GamePanel now if selected
+            if (isSelected) {
+                g2d.setColor(new Color(150, 150, 150, 100));
+                g2d.fillOval((int) (x - range), (int) (y - range), (int) (range * 2), (int) (range * 2));
+            }
 
         BufferedImage currentSprite = isAnimatingShot ? this.shootingSprite : this.idleSprite;
         if (currentSprite == null || currentSprite == SpriteManager.getPlaceholderSprite()) {

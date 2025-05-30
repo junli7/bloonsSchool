@@ -71,19 +71,19 @@ public class SideInfoPanel extends JPanel{
 
 
         add(Box.createRigidArea(new Dimension(0, 20)));
-        JLabel buyTitleLabel = new JLabel("Buy Monkeys:");
+        JLabel buyTitleLabel = new JLabel("Buy Brainrot:");
         buyTitleLabel.setFont(new Font("Arial", Font.BOLD, 15));
         add(buyTitleLabel);
         add(Box.createRigidArea(new Dimension(0, 5)));
 
         BufferedImage monkeyIdleSprite = SpriteManager.getScaledSprite("monkey_base_idle.png", buySpritePreviewSize, buySpritePreviewSize);
-        addBuyButtonWithSprite("Dart Monkey", Monkey.COST, "Standard dart monkey.", monkeyIdleSprite, "Monkey");
+        addBuyButtonWithSprite("B.B.Patapim", Monkey.COST, "Shoots. Sees camo", monkeyIdleSprite, "Monkey");
 
         BufferedImage monkeyBIdleSprite = SpriteManager.getScaledSprite("monkey_bomber_idle.png", buySpritePreviewSize, buySpritePreviewSize);
-        addBuyButtonWithSprite("Bomb Tower", MonkeyB.COST, "Explosive bombs. Sees camo.", monkeyBIdleSprite, "MonkeyB");
+        addBuyButtonWithSprite("Mr. Sahur", MonkeyB.COST, "AOE attacks.", monkeyBIdleSprite, "MonkeyB");
 
         BufferedImage monkeyCIdleSprite = SpriteManager.getScaledSprite("monkey_slow_idle.png", buySpritePreviewSize, buySpritePreviewSize);
-        addBuyButtonWithSprite("Ice Monkey", MonkeyC.COST, "Slows humans in AoE.", monkeyCIdleSprite, "MonkeyC");
+        addBuyButtonWithSprite("Lirili Larila", MonkeyC.COST, "Slows humans in AoE. No damage", monkeyCIdleSprite, "MonkeyC");
 
 
         Timer updateTimer = new Timer(100, e ->{

@@ -77,13 +77,13 @@ public class SideInfoPanel extends JPanel {
         add(Box.createRigidArea(new Dimension(0, 5)));
 
         BufferedImage monkeyIdleSprite = SpriteManager.getScaledSprite("monkey_base_idle.png", BUY_BUTTON_SPRITE_PREVIEW_SIZE, BUY_BUTTON_SPRITE_PREVIEW_SIZE);
-        addBuyButtonWithSprite("Dart Monkey", Monkey.COST, "Standard dart monkey.", monkeyIdleSprite, "Monkey");
+        addBuyButtonWithSprite("B.B.Patapim", Monkey.COST, "BrrBrr Patapim. Shoots", monkeyIdleSprite, "Monkey");
 
         BufferedImage monkeyBIdleSprite = SpriteManager.getScaledSprite("monkey_bomber_idle.png", BUY_BUTTON_SPRITE_PREVIEW_SIZE, BUY_BUTTON_SPRITE_PREVIEW_SIZE);
-        addBuyButtonWithSprite("Bomb Tower", MonkeyB.COST, "Explosive bombs. Sees camo.", monkeyBIdleSprite, "MonkeyB");
+        addBuyButtonWithSprite("Mr. Sahur", MonkeyB.COST, "Tung Tung Sahur AOE attacks. Sees camo.", monkeyBIdleSprite, "MonkeyB");
         
         BufferedImage monkeyCIdleSprite = SpriteManager.getScaledSprite("monkey_slow_idle.png", BUY_BUTTON_SPRITE_PREVIEW_SIZE, BUY_BUTTON_SPRITE_PREVIEW_SIZE);
-        addBuyButtonWithSprite("Ice Monkey", MonkeyC.COST, "Slows humans in AoE.", monkeyCIdleSprite, "MonkeyC");
+        addBuyButtonWithSprite("Lirili Larila", MonkeyC.COST, "Slows humans in AoE.", monkeyCIdleSprite, "MonkeyC");
 
 
         Timer updateTimer = new Timer(100, e -> { // Faster update for responsiveness

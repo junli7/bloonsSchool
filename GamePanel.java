@@ -53,13 +53,13 @@ public class GamePanel extends JPanel {
         mapCoordinates.add(new Point(100, 75));
         mapCoordinates.add(new Point(100, 275));
         mapCoordinates.add(new Point(350, 275));
-        mapCoordinates.add(new Point(350, 75));
-        mapCoordinates.add(new Point(500, 75));
-        mapCoordinates.add(new Point(500, 275));
-        mapCoordinates.add(new Point(575, 275));
-        mapCoordinates.add(new Point(575, 75));
-        mapCoordinates.add(new Point(725, 75));
-        mapCoordinates.add(new Point(725, 450));
+        mapCoordinates.add(new Point(350, 175));
+
+        mapCoordinates.add(new Point(725, 175));
+        mapCoordinates.add(new Point(725, 350));
+        mapCoordinates.add(new Point(525, 350));
+        mapCoordinates.add(new Point(525, 450));
+
         mapCoordinates.add(new Point(200, 450));
         mapCoordinates.add(new Point(200, 375));
         mapCoordinates.add(new Point(275, 375));

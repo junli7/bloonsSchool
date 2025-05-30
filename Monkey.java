@@ -75,7 +75,7 @@ public class Monkey {
         this.projectileColor = Color.RED;
         this.projectileRadius = 5;
         this.projectileSpeed = 5.0;
-        this.projectileDamage = 1;
+        this.projectileDamage = 10;
         this.projectileIsExplosive = false;
         this.projectileAoeRadius = 0.0;
 
@@ -237,7 +237,7 @@ public class Monkey {
         this.shootCooldown = Math.max(100, this.shootCooldown - 25);
 
         if (this.projectileDamage > 0) {
-            this.projectileDamage += 1;
+            this.projectileDamage += 10;
         }
         if (this.level >= 3 && !this.canSeeCamo) {
             boolean grantedByArchetype = false; 
@@ -257,10 +257,10 @@ public class Monkey {
 
     public void draw(Graphics2D g2d) {
         // Range circle is drawn by GamePanel now if selected
-        // if (isSelected) {
-        //     g2d.setColor(new Color(150, 150, 150, 100));
-        //     g2d.fillOval((int) (x - range), (int) (y - range), (int) (range * 2), (int) (range * 2));
-        // }
+        if (isSelected) {
+             g2d.setColor(new Color(150, 150, 150, 100));
+             g2d.fillOval((int) (x - range), (int) (y - range), (int) (range * 2), (int) (range * 2));
+         }
 
         BufferedImage currentSprite = isAnimatingShot ? this.shootingSprite : this.idleSprite;
         if (currentSprite == null || currentSprite == SpriteManager.getPlaceholderSprite()) {

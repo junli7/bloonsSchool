@@ -151,9 +151,9 @@ public class UpgradeGUI {
         g2d.setFont(this.headerFont);
         FontMetrics headerFm = g2d.getFontMetrics();
         String monkeyNameDisplay = selectedMonkey.getClass().getSimpleName();
-        if (monkeyNameDisplay.equals("Monkey")) monkeyNameDisplay = "Dart Monkey";
-        else if (monkeyNameDisplay.equals("MonkeyB")) monkeyNameDisplay = "Bomb Tower";
-        else if (monkeyNameDisplay.equals("MonkeyC")) monkeyNameDisplay = "Ice Monkey";
+        if (monkeyNameDisplay.equals("Monkey")) monkeyNameDisplay = "Brr Brr Patapim";
+        else if (monkeyNameDisplay.equals("MonkeyB")) monkeyNameDisplay = "Mr. Sahur";
+        else if (monkeyNameDisplay.equals("MonkeyC")) monkeyNameDisplay = "Lirili Larila";
         
         String headerText = monkeyNameDisplay + " - L" + selectedMonkey.getLevel();
         if(selectedMonkey.hasChosenArchetype()){

@@ -153,7 +153,7 @@ public class UpgradeGUI {
         
         String headerText = monkeyNameDisplay + " - L" + selectedMonkey.getLevel();
         if(selectedMonkey.hasChosenArchetype()){
-            headerText += " (" + selectedMonkey.tộcViếtTắt(selectedMonkey.getChosenArchetype()) + ")";
+            headerText += " (" + selectedMonkey.archetypetype(selectedMonkey.getChosenArchetype()) + ")";
         }
         int headerWidth = headerFm.stringWidth(headerText);
         g2d.drawString(headerText, centerX - headerWidth / 2, currentY + headerFm.getAscent());

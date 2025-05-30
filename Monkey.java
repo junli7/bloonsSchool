@@ -137,7 +137,7 @@ public class Monkey {
             default: return "Unknown Path";
         }
     }
-    public String tộcViếtTắt(String key){ 
+    public String archetypetype(String key){ 
         switch (key){
             case archetypeDART_SNIPER: return "SN";
             case archetypeDART_QUICKFIRE: return "QF";
@@ -265,7 +265,7 @@ public class Monkey {
         }
 
         g2d.setColor(Color.BLACK);
-        String levelText = "L" + level + (chosenArchetype.equals(archetypeNONE) || !hasChosenArchetype ? "" : " " + tộcViếtTắt(chosenArchetype));
+        String levelText = "L" + level + (chosenArchetype.equals(archetypeNONE) || !hasChosenArchetype ? "" : " " + archetypetype(chosenArchetype));
         FontMetrics fm = g2d.getFontMetrics();
         int textWidth = fm.stringWidth(levelText);
         g2d.drawString(levelText, x - textWidth / 2, y + (int) (hitbox / 2) + fm.getAscent() + 2);

@@ -26,14 +26,12 @@ public class Map {
         g2d.setStroke(new BasicStroke(1));
     }
 
-    // Modified to spawn by type
     public Human spawnHumanByType(String humanType, boolean isCamoFromSpawnInstruction) {
         if (pathCoordinates == null || pathCoordinates.isEmpty()) {
             System.err.println("Cannot spawn human: Path is empty or null.");
             return null;
         }
         Point startPoint = pathCoordinates.get(0);
-        // Human constructor now takes humanType, startX, startY, isCamoFromSpawn, path
         Human newHuman = new Human(humanType, startPoint.getX(), startPoint.getY(), isCamoFromSpawnInstruction, this.pathCoordinates);
         return newHuman;
     }

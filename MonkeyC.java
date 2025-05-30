@@ -2,9 +2,9 @@ import java.awt.Color;
 
 public class MonkeyC extends Monkey {
     public static final int COST = 200;
-    private static final String MONKEY_C_IDLE_SPRITE_PATH = "monkey_slow_idle.png";
-    private static final String MONKEY_C_SHOOT_SPRITE_PATH = "monkey_slow_shoot.png";
-    private static final String ICE_EXPLOSION_SPRITE_PATH = "project_slow.png";
+    private static final String monkeyCIDLEspritePath = "monkey_slow_idle.png";
+    private static final String monkeyCSHOOTspritePath = "monkey_slow_shoot.png";
+    private static final String iceExplosionspritePath = "project_slow.png";
 
     protected int slowDurationMillis;
 
@@ -13,8 +13,8 @@ public class MonkeyC extends Monkey {
         this.range = 70.0;
         this.hitbox = 55.0;
 
-        super.idleSpritePath = MONKEY_C_IDLE_SPRITE_PATH;
-        super.shootingSpritePath = MONKEY_C_SHOOT_SPRITE_PATH;
+        super.idleSpritePath = monkeyCIDLEspritePath;
+        super.shootingSpritePath = monkeyCSHOOTspritePath;
         super.loadSprites();
 
         this.projectileColor = new Color(100, 150, 255);
@@ -59,7 +59,7 @@ public class MonkeyC extends Monkey {
             this.projectileDamage,
             this.projectileIsExplosive, this.projectileAoeRadius,
             this.projectileExplosionVisualColor, this.projectileExplosionVisualDuration,
-            this.projectileExplosionSpritePath != null ? this.projectileExplosionSpritePath : ICE_EXPLOSION_SPRITE_PATH,
+            this.projectileExplosionSpritePath != null ? this.projectileExplosionSpritePath : iceExplosionspritePath,
             true, this.slowDurationMillis
         );
         projectiles.add(newProjectile);

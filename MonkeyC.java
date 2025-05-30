@@ -1,96 +1,99 @@
 import java.awt.Color;
 
-public class MonkeyC extends Monkey { // Assuming it extends Monkey, can also extend MonkeyB if it shares bomb logic
+public class MonkeyC extends Monkey {
 
-    public static final int COST = 200; // Example cost
-    private static final String MONKEY_C_IDLE_SPRITE_PATH = "monkey_slow_idle.png";   // Needs new sprite
-    private static final String MONKEY_C_SHOOT_SPRITE_PATH = "monkey_slow_shoot.png"; // Needs new sprite
-    // If MonkeyC's projectile is also explosive (e.g., an ice bomb that shatters)
-    private static final String ICE_EXPLOSION_SPRITE_PATH = "ice_explosion_effect.png"; // Optional
+    public static final int COST = 200;
+    private static final String MONKEY_C_IDLE_SPRITE_PATH = "monkey_slow_idle.png";
+    private static final String MONKEY_C_SHOOT_SPRITE_PATH = "monkey_slow_idle.png"; // Use idle if no shoot sprite
+    private static final String ICE_EXPLOSION_SPRITE_PATH = "project_slow.png"; // Optional specific explosion for ice
 
-    // Slowing specific properties
-    private int slowDurationMillis = 1000; // 2 seconds
-    private double baseAoeRadiusForSlow = 50.0; // If its slow is AoE
+    // MonkeyC specific stats
+    protected int slowDurationMillis; // Moved from projectileIsSlowing in base Monkey
 
     public MonkeyC(int nx, int ny, int nlevel) {
         super(nx, ny, nlevel);
 
-        // Override defaults for MonkeyC
-        this.range = 75.0 + ((nlevel - 1) * 5); // Example range
-        this.hitbox = 55.0; // Example hitbox
+        this.range = 70.0;
+        this.hitbox = 55.0;
 
         super.idleSpritePath = MONKEY_C_IDLE_SPRITE_PATH;
-        super.shootingSpritePath = MONKEY_C_SHOOT_SPRITE_PATH;
+        super.shootingSpritePath = MONKEY_C_SHOOT_SPRITE_PATH; // Make sure this exists or use idle
         super.loadSprites();
 
-        // MonkeyC specific properties
-        //setColor(Color.CYAN, new Color(100, 150, 255)); // Light blue projectile fallback
-        setProjectileRadius(7); // Example
-        setProjectileSpeed(4.0);  // Example
-        setShootCooldown(800); // Example
+        // L1 MonkeyC specific properties
+        this.projectileColor = new Color(100, 150, 255); // Fallback
+        this.projectileRadius = 7;
+        this.projectileSpeed = 3.5;
+        this.shootCooldown = 900;
+        this.canSeeCamo = false; // Base ice monkey cannot see camo
 
-        // --- Crucial for MonkeyC ---
-        this.projectileDamage = 0; // Does no direct damage
-        super.projectileIsExplosive = true; // Let's make it AoE slow
-        super.projectileAoeRadius = this.baseAoeRadiusForSlow + ((this.level -1) * 3);
-        super.projectileExplosionVisualColor = new Color(173, 216, 230, 150); // Light blue explosion
-        super.projectileExplosionVisualDuration = 15; // Shorter visual for ice
-        super.projectileExplosionSpritePath = ICE_EXPLOSION_SPRITE_PATH; // Optional specific explosion sprite
+        this.projectileDamage = 0; // L1 Ice monkey does no damage
+        this.projectileIsExplosive = true; // AoE slow
+        this.projectileAoeRadius = 40.0;   // L1 slow AoE
+        this.projectileExplosionVisualColor = new Color(173, 216, 230, 150);
+        this.projectileExplosionVisualDuration = 15;
+        //this.projectileExplosionSpritePath = ICE_EXPLOSION_SPRITE_PATH; // If you have one
 
-        // --- Set projectile to be slowing ---
-        super.canSeeCamo = false; // Example: basic MonkeyC can't see camo, upgrade needed
-        // These would be new fields in the base Monkey class if we want all monkeys to potentially slow
-        // For now, we pass them directly to the Projectile constructor from MonkeyC's fireProjectile.
-        // Or, add them as protected fields in Monkey.java:
-        // protected boolean projectileIsSlowing = false;
-        // protected int projectileSlowDurationMillis = 0;
-        // Then set them here:
-        // super.projectileIsSlowing = true;
-        // super.projectileSlowDurationMillis = this.slowDurationMillis;
-
+        // Slowing properties
+        this.slowDurationMillis = 1000; // L1 slow duration
+        
+        // Recalculate L1->L2 cost
+        calculateUpgradeCost();
     }
-
+    
+    // MonkeyC applies its specific archetype stats
+    public void applyMonkeyCArchetypeStats(String archetypeKey) {
+        // First, call base class's applyArchetypeStats if it has relevant general changes
+        // super.applyArchetypeStats(archetypeKey); // But Monkey.applyArchetypeStats filters by class.
+                                                 // So MonkeyC needs to handle its own fully or call a generic part.
+                                                 // For now, Monkey.applyArchetypeStats handles the common ones.
+        if (archetypeKey.equals(ARCHETYPE_ICE_PERMAFROST)) {
+            this.slowDurationMillis = (int)(this.slowDurationMillis * 2.5); // Significantly longer slow
+            this.shootCooldown = (long)(this.shootCooldown * 1.15); // Slightly slower attack
+            System.out.println("Ice Monkey: Permafrost chosen. Slow Duration: " + this.slowDurationMillis);
+        } else if (archetypeKey.equals(ARCHETYPE_ICE_BRITTLE)) {
+            this.projectileDamage = 1; // Ice monkey now does damage
+            this.slowDurationMillis = (int)(this.slowDurationMillis * 0.8); // Slight reduction in slow duration as trade-off
+            this.canSeeCamo = true; // Brittle ice can see camo
+            System.out.println("Ice Monkey: Brittle Ice chosen. Now deals damage: " + this.projectileDamage + ". Can see camo.");
+        }
+    }
 
 
     @Override
-    public void upgrade() {
-        this.level++;
-        calculateUpgradeCost();
-        this.slowDurationMillis+=2000;
-        this.range += 10;
-        this.projectileSpeed += 5;
-        this.shootCooldown = Math.max(100, this.shootCooldown - 20);
-        this.projectileAoeRadius+=100;
-        if (this.level > 3) { // Example: camo detection at higher level
-            this.canSeeCamo = true;
-        }
-        loadSprites();
+    public void upgrade() { // Standard upgrade path L2+
+        super.upgrade(); // Applies generic Monkey upgrades
 
- 
-        System.out.println(this.getClass().getSimpleName() + " at (" + x + "," + y + ") upgraded to level " + this.level +
-                ". New range: " + this.range + ", Damage: " + this.projectileDamage +
-                ", Next upgrade cost: " + this.upgradeCost);
-        // Example: increase slow duration or AoE with upgrades
-        // this.slowDurationMillis += 200;
-        System.out.println("MonkeyC upgraded. AoE Slow Radius: " + this.projectileAoeRadius);
+        // MonkeyC specific standard upgrade benefits:
+        this.slowDurationMillis += 300; // Each standard level increases slow duration
+        this.projectileAoeRadius += 6; // And AoE of slow effect
+        
+        // If BRITTLE path, damage was already increased by Monkey.upgrade()'s generic +1.
+        // If Permafrost, no damage to increase.
+
+        System.out.println("MonkeyC standard upgraded. AoE: " + this.projectileAoeRadius + ", Slow Duration: " + this.slowDurationMillis);
     }
-    private void calculateUpgradeCost() {
-        this.upgradeCost = 50 + (this.level * 75);
-    }
-    // We need to override fireProjectile to pass the slowing parameters
+
     @Override
     protected void fireProjectile(Human target) {
         if (target == null) return;
         Projectile newProjectile = new Projectile(
                 this.x, this.y, target,
                 this.projectileSpeed, this.projectileRadius, this.projectileColor,
-                this.projectileDamage, // Will be 0
+                this.projectileDamage,
                 this.projectileIsExplosive, this.projectileAoeRadius,
                 this.projectileExplosionVisualColor, this.projectileExplosionVisualDuration,
-                this.projectileExplosionSpritePath,
+                this.projectileExplosionSpritePath != null ? this.projectileExplosionSpritePath : ICE_EXPLOSION_SPRITE_PATH, // Pass correct explosion sprite
                 true, // isSlowing = true
-                this.slowDurationMillis // pass the slow duration
+                this.slowDurationMillis
         );
+        // Overwrite projectile's flying sprite path if it's specific for ice
+        // This is a bit of a hack due to Projectile constructor complexity.
+        // A better way would be for Projectile to take a flyingSpritePath parameter.
+        // For now, this specific projectile type might need its own path logic in Projectile.java
+        // Or, ensure Projectile.java uses SLOW_PROJECTILE_SPRITE_PATH correctly.
+        // The current Projectile constructor uses SLOW_PROJECTILE_SPRITE_PATH if isSlowingProjectile is true.
+
         projectiles.add(newProjectile);
         lastShotTime = System.currentTimeMillis();
     }

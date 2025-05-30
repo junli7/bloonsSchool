@@ -14,20 +14,20 @@ public class Monkey {
     protected List<Projectile> projectiles;
     protected Color monkeyColor = Color.ORANGE;
 
-    public static final int COST = 75;
+    public static final int COST = 75; // Base cost
 
     public static final double DEFAULT_INITIAL_RANGE = 80.0;
     public static final double DEFAULT_INITIAL_HITBOX = 50.0;
 
     protected Color projectileColor = Color.RED;
-    protected int projectileRadius = 10; // Visual radius of the projectile itself
+    protected int projectileRadius = 10;
     protected double projectileSpeed = 5.0;
     protected int projectileDamage;
     protected boolean projectileIsExplosive;
-    protected double projectileAoeRadius; // For explosive damage/effect area
+    protected double projectileAoeRadius;
     protected Color projectileExplosionVisualColor = Color.ORANGE;
     protected int projectileExplosionVisualDuration = 20;
-    protected String projectileExplosionSpritePath; // Sprite for the explosion visual
+    protected String projectileExplosionSpritePath;
 
     protected long lastShotTime = 0;
     protected long shootCooldown = 500;
@@ -42,37 +42,62 @@ public class Monkey {
     protected boolean isAnimatingShot = false;
     protected long shotAnimationEndTime = 0;
     protected static final long SHOT_ANIMATION_DURATION_MS = 400;
-
     protected double lastShotAngleRadians = 0;
+
+    public static final String ARCHETYPE_NONE = "NONE";
+    public static final String ARCHETYPE_DART_SNIPER = "DART_SNIPER";
+    public static final String ARCHETYPE_DART_QUICKFIRE = "DART_QUICKFIRE";
+    public static final String ARCHETYPE_BOMB_FRAGS = "BOMB_FRAGS";
+    public static final String ARCHETYPE_BOMB_CONCUSSION = "BOMB_CONCUSSION";
+    public static final String ARCHETYPE_ICE_PERMAFROST = "ICE_PERMAFROST";
+    public static final String ARCHETYPE_ICE_BRITTLE = "ICE_BRITTLE";
+
+    protected String chosenArchetype = ARCHETYPE_NONE;
+    protected boolean hasChosenArchetype = false;
+
+    // --- Sell Functionality Field ---
+    protected int totalSpentOnMonkey;
+    public static final double SELL_PERCENTAGE = 0.7; // Sell for 70% of total spent
+    // --- End Sell Functionality Field ---
 
     public Monkey(int nx, int ny, int nlevel) {
         this.x = nx;
         this.y = ny;
         this.level = nlevel;
 
-        this.range = DEFAULT_INITIAL_RANGE + ((nlevel - 1) * 5);
+        this.range = DEFAULT_INITIAL_RANGE;
         this.hitbox = DEFAULT_INITIAL_HITBOX;
 
         this.projectiles = new ArrayList<>();
         loadSprites();
 
-        // Default projectile properties for a standard Monkey
-        this.monkeyColor = Color.ORANGE; // Fallback if sprites fail
-        this.projectileColor = Color.RED; // Fallback for projectile if its sprite fails
-        this.projectileRadius = 5; // Visual size of the dart/projectile
+        this.monkeyColor = Color.ORANGE;
+        this.projectileColor = Color.RED;
+        this.projectileRadius = 5;
         this.projectileSpeed = 5.0;
-        this.projectileDamage = 1 + (this.level / 2); // Standard monkey does damage
-        this.projectileIsExplosive = false; // Standard monkey is not explosive
+        this.projectileDamage = 1;
+        this.projectileIsExplosive = false;
         this.projectileAoeRadius = 0.0;
-        this.projectileExplosionVisualColor = Color.ORANGE; // Not used if not explosive
-        this.projectileExplosionVisualDuration = 20;    // Not used if not explosive
-        this.projectileExplosionSpritePath = null;      // No explosion sprite if not explosive
+
+        // --- Initialize totalSpentOnMonkey ---
+        // Determine base cost based on actual type. This assumes COST is correctly set in subclasses.
+        if (this instanceof MonkeyB) {
+            this.totalSpentOnMonkey = MonkeyB.COST;
+        } else if (this instanceof MonkeyC) {
+            this.totalSpentOnMonkey = MonkeyC.COST;
+        } else { // Base Monkey or unknown
+            this.totalSpentOnMonkey = Monkey.COST;
+        }
+        // --- End Initialize ---
 
         calculateUpgradeCost();
-        if (this.level > 2) {
-            this.canSeeCamo = true;
-        }
     }
+
+    // --- Sell Functionality Method ---
+    public int getSellValue() {
+        return (int) (totalSpentOnMonkey * SELL_PERCENTAGE);
+    }
+    // --- End Sell Functionality Method ---
 
     protected void loadSprites() {
         int spriteSize = (int) this.hitbox;
@@ -91,34 +116,151 @@ public class Monkey {
         }
     }
 
-    private void calculateUpgradeCost() {
+    protected void calculateUpgradeCost() {
         this.upgradeCost = 50 + (this.level * 75);
     }
 
-    public void upgrade() {
-        this.level++;
-        calculateUpgradeCost();
-        this.range += 5;
-        this.projectileSpeed += 0.1;
-        this.shootCooldown = Math.max(100, this.shootCooldown - 20);
-        this.projectileDamage = 1 + (this.level / 2);
+    public String getChosenArchetype() { return chosenArchetype; }
+    public boolean hasChosenArchetype() { return hasChosenArchetype; }
 
-        loadSprites();
-
-        if (this.level > 2 && !this.canSeeCamo) {
-            this.canSeeCamo = true;
-            System.out.println(this.getClass().getSimpleName() + " gained camo detection!");
+    public String[] getArchetypeChoices() {
+        if (this instanceof MonkeyB) {
+            return new String[]{ARCHETYPE_BOMB_FRAGS, ARCHETYPE_BOMB_CONCUSSION};
+        } else if (this instanceof MonkeyC) {
+            return new String[]{ARCHETYPE_ICE_PERMAFROST, ARCHETYPE_ICE_BRITTLE};
+        } else if (this.getClass() == Monkey.class) {
+            return new String[]{ARCHETYPE_DART_SNIPER, ARCHETYPE_DART_QUICKFIRE};
         }
-        System.out.println(this.getClass().getSimpleName() + " at (" + x + "," + y + ") upgraded to level " + this.level +
-                ". New range: " + this.range + ", Damage: " + this.projectileDamage +
-                ", Next upgrade cost: " + this.upgradeCost);
+        return new String[0];
     }
 
-    public void draw(Graphics2D g2d) {
-        if (isSelected) {
-            g2d.setColor(new Color(150, 150, 150, 100));
-            g2d.fillOval((int) (x - range), (int) (y - range), (int) (range * 2), (int) (range * 2));
+    public String archetypeKeyToString(String key) {
+        switch (key) {
+            case ARCHETYPE_DART_SNIPER: return "Sniper Path";
+            case ARCHETYPE_DART_QUICKFIRE: return "Quickfire Path";
+            case ARCHETYPE_BOMB_FRAGS: return "Frag Path";
+            case ARCHETYPE_BOMB_CONCUSSION: return "Concussion Path";
+            case ARCHETYPE_ICE_PERMAFROST: return "Permafrost Path";
+            case ARCHETYPE_ICE_BRITTLE: return "Brittle Ice Path";
+            default: return "Unknown Path";
         }
+    }
+    public String tộcViếtTắt(String key) { 
+        switch (key) {
+            case ARCHETYPE_DART_SNIPER: return "Sn";
+            case ARCHETYPE_DART_QUICKFIRE: return "Qf";
+            case ARCHETYPE_BOMB_FRAGS: return "Fr";
+            case ARCHETYPE_BOMB_CONCUSSION: return "Cc";
+            case ARCHETYPE_ICE_PERMAFROST: return "Pf";
+            case ARCHETYPE_ICE_BRITTLE: return "Br";
+            default: return "";
+        }
+    }
+
+    public String getArchetypeDescription(String key) {
+        if (this.getClass() == Monkey.class) {
+            if (key.equals(ARCHETYPE_DART_SNIPER)) return "Greatly +Range, Slower Fire";
+            if (key.equals(ARCHETYPE_DART_QUICKFIRE)) return "++Fire Rate, +DMG, -Range";
+        } else if (this instanceof MonkeyB) {
+            if (key.equals(ARCHETYPE_BOMB_FRAGS)) return "Increased Blast Radius";
+            if (key.equals(ARCHETYPE_BOMB_CONCUSSION)) return "+Damage, Smaller Blast, Slower Fire";
+        } else if (this instanceof MonkeyC) {
+            if (key.equals(ARCHETYPE_ICE_PERMAFROST)) return "Greatly Increased Slow Duration";
+            if (key.equals(ARCHETYPE_ICE_BRITTLE)) return "Attacks Now Deal Damage";
+        }
+        return "Select an upgrade path.";
+    }
+
+    protected void applyArchetypeStats(String archetypeKey) {
+        if (this.getClass() == Monkey.class) { 
+            if (archetypeKey.equals(ARCHETYPE_DART_SNIPER)) {
+                this.range *= 1.8; 
+                this.shootCooldown = (long)(this.shootCooldown * 1.7); 
+            } else if (archetypeKey.equals(ARCHETYPE_DART_QUICKFIRE)) {
+                this.shootCooldown = (long)(this.shootCooldown * 0.4); 
+                this.projectileDamage += 1; 
+                this.range *= 0.75; 
+            }
+        } else if (this instanceof MonkeyB) {
+            if (archetypeKey.equals(ARCHETYPE_BOMB_FRAGS)) {
+                this.projectileAoeRadius *= 1.6;
+            } else if (archetypeKey.equals(ARCHETYPE_BOMB_CONCUSSION)) {
+                this.projectileDamage += 3;
+                this.projectileAoeRadius *= 0.7;
+                this.shootCooldown = (long)(this.shootCooldown * 1.3);
+            }
+        }
+        // MonkeyC archetype stats are handled in its own applyMonkeyCArchetypeStats
+    }
+
+    public void selectArchetypeAndUpgrade(String archetypeKey, GameState gameState) {
+        if (this.level != 1 || this.hasChosenArchetype) return;
+        
+        int costOfThisUpgrade = this.getUpgradeCost(); // Get cost before spending
+        if (!gameState.canAfford(costOfThisUpgrade)) return;
+
+        gameState.spendMoney(costOfThisUpgrade);
+        this.totalSpentOnMonkey += costOfThisUpgrade; // Add to total spent
+
+        this.chosenArchetype = archetypeKey;
+        this.hasChosenArchetype = true;
+        
+        if (this instanceof MonkeyC) {
+            ((MonkeyC)this).applyMonkeyCArchetypeStats(archetypeKey);
+        } else {
+             applyArchetypeStats(archetypeKey); 
+        }
+
+        this.level++; 
+        calculateUpgradeCost(); 
+        loadSprites(); 
+
+        System.out.println(this.getClass().getSimpleName() + " chose " + archetypeKeyToString(archetypeKey) + " and upgraded to level " + this.level +
+                ". Next cost: " + this.upgradeCost + ". Total spent: " + this.totalSpentOnMonkey);
+    }
+    
+    public void upgrade() {
+        if (!this.hasChosenArchetype && this.level == 1) return;
+        if (this.level >= 10) return;
+        
+        int costOfThisUpgrade = this.getUpgradeCost(); // Get cost before spending
+        // Assuming GameState.canAfford was checked by caller (UpgradeGUI -> UpgradeControlPanel)
+        // For safety, it could be checked here too, but it would be redundant if UI handles it.
+        // gameState.spendMoney(costOfThisUpgrade); // Money spending is handled by GUI layer before calling this
+        this.totalSpentOnMonkey += costOfThisUpgrade; // Add to total spent
+
+        this.level++;
+        calculateUpgradeCost(); 
+
+        this.range += 5;
+        this.projectileSpeed += 0.2;
+        this.shootCooldown = Math.max(100, this.shootCooldown - 25);
+
+        if (this.projectileDamage > 0) {
+            this.projectileDamage += 1;
+        }
+        if (this.level >= 3 && !this.canSeeCamo) {
+            boolean grantedByArchetype = false; 
+            if(this instanceof MonkeyC && ((MonkeyC)this).chosenArchetype.equals(ARCHETYPE_ICE_BRITTLE)){
+                 grantedByArchetype = true; // Brittle Ice grants camo
+            }
+            if(!grantedByArchetype) {
+                this.canSeeCamo = true;
+            }
+        }
+        loadSprites(); 
+
+        System.out.println(this.getClass().getSimpleName() + " standard upgraded to level " + this.level +
+                ". Next cost: " + this.upgradeCost + ". Total spent: " + this.totalSpentOnMonkey);
+    }
+
+
+    public void draw(Graphics2D g2d) {
+        // Range circle is drawn by GamePanel now if selected
+        // if (isSelected) {
+        //     g2d.setColor(new Color(150, 150, 150, 100));
+        //     g2d.fillOval((int) (x - range), (int) (y - range), (int) (range * 2), (int) (range * 2));
+        // }
 
         BufferedImage currentSprite = isAnimatingShot ? this.shootingSprite : this.idleSprite;
         if (currentSprite == null || currentSprite == SpriteManager.getPlaceholderSprite()) {
@@ -138,7 +280,7 @@ public class Monkey {
         }
 
         g2d.setColor(Color.BLACK);
-        String levelText = "Lvl: " + level;
+        String levelText = "L" + level + (chosenArchetype.equals(ARCHETYPE_NONE) || !hasChosenArchetype ? "" : " " + tộcViếtTắt(chosenArchetype));
         FontMetrics fm = g2d.getFontMetrics();
         int textWidth = fm.stringWidth(levelText);
         g2d.drawString(levelText, x - textWidth / 2, y + (int) (hitbox / 2) + fm.getAscent() + 2);
@@ -169,7 +311,7 @@ public class Monkey {
             double currentHumanProgress = human.getCurrentPathIndex();
             if (mapPath != null && !mapPath.isEmpty() && human.getCurrentPathIndex() < mapPath.size()) {
                 Point nextWaypoint = mapPath.get(human.getCurrentPathIndex());
-                double totalDistToNextWaypoint = this.range; // Default if at first waypoint
+                double totalDistToNextWaypoint = this.range;
                 if(human.getCurrentPathIndex() > 0) {
                     Point prevWaypoint = mapPath.get(human.getCurrentPathIndex()-1);
                     totalDistToNextWaypoint = prevWaypoint.distance(nextWaypoint);
@@ -194,15 +336,9 @@ public class Monkey {
         this.lastShotAngleRadians = Math.atan2(deltaY, deltaX);
         this.isAnimatingShot = true;
         this.shotAnimationEndTime = System.currentTimeMillis() + SHOT_ANIMATION_DURATION_MS;
-        fireProjectile(target); // This will now call the updated fireProjectile
+        fireProjectile(target);
     }
 
-    /**
-     * Creates and fires a projectile at the target.
-     * This base version fires a non-slowing projectile.
-     * Subclasses (like MonkeyC) that fire slowing projectiles MUST override this method.
-     * @param target The Human to target.
-     */
     protected void fireProjectile(Human target) {
         if (target == null) return;
         Projectile newProjectile = new Projectile(
@@ -212,9 +348,7 @@ public class Monkey {
                 this.projectileIsExplosive, this.projectileAoeRadius,
                 this.projectileExplosionVisualColor, this.projectileExplosionVisualDuration,
                 this.projectileExplosionSpritePath,
-                // Default values for slowing parameters for base Monkey & MonkeyB (unless overridden)
-                false, // isSlowing
-                0      // slowDurationMillis
+                false, 0 
         );
         projectiles.add(newProjectile);
         lastShotTime = System.currentTimeMillis();

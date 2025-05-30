@@ -8,7 +8,7 @@ public class SideInfoPanel extends JPanel {
     private GameState gameState;
     private GamePanel gamePanel; // To call startNextWave
 
-    private static final int PANEL_WIDTH = 200;
+    public static final int PANEL_WIDTH = 200;
     private static final int BUTTON_HEIGHT = 25;
     private static final int BUY_BUTTON_SPRITE_PREVIEW_SIZE = 32;
     private static final int FIXED_BUY_BUTTON_WIDTH = 120;

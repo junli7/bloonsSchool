@@ -172,8 +172,7 @@ public class Monkey {
                 this.projectileSpeed = 20;
 
             } else if (archetypeKey.equals(archetypeDART_QUICKFIRE)){
-                this.shootCooldown = (long)(this.shootCooldown * 0.4); 
-                this.projectileDamage =this.projectileDamage*3; 
+                this.shootCooldown = (long)(this.shootCooldown * 0.2); 
             }
         } else if (this instanceof MonkeyB){ //TUNG TUNG
             if (archetypeKey.equals(archetypeBOMB_FRAGS)){

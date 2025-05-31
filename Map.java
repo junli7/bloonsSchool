@@ -10,21 +10,7 @@ public class Map {
     public Map(ArrayList<Point> coords) {
         this.pathCoordinates = coords;
     }
-    //remove once derek drawsmap
-    public void draw(Graphics2D g2d) {
-        if (pathCoordinates == null || pathCoordinates.size() < 2) {
-            return;
-        }
-        g2d.setColor(new Color(160, 82, 45));
-        g2d.setStroke(new BasicStroke(20));
 
-        for (int i = 0; i < pathCoordinates.size() - 1; i++) {
-            Point p1 = pathCoordinates.get(i);
-            Point p2 = pathCoordinates.get(i + 1);
-            g2d.drawLine((int) p1.getX(), (int) p1.getY(), (int) p2.getX(), (int) p2.getY());
-        }
-        g2d.setStroke(new BasicStroke(1));
-    }
 
     public Human spawnHumanByType(String humanType, boolean isCamoFromSpawnInstruction) {
         if (pathCoordinates == null || pathCoordinates.isEmpty()) {

@@ -39,43 +39,43 @@ public class Human{
         this.humanType = humanType;
 
         if ("baby".equalsIgnoreCase(humanType)){
-            this.originalSpeed = 3.0;
-            this.health = 100;
+            this.originalSpeed = 5.0;
+            this.health = 200;
             this.hitboxDiameter = 40;
             this.currentSpriteVariants = List.of("human_baby.png");
             this.defaultCamoForType = false;
-            this.moneyReward = 25;
+            this.moneyReward = 100;
         } else if ("kid".equalsIgnoreCase(humanType)){
-            this.originalSpeed = 1.5;
-            this.health = 250;
+            this.originalSpeed = 2;
+            this.health = 50;
             this.hitboxDiameter = 40;
             this.currentSpriteVariants = List.of("human_kid0.png", "human_kid1.png");
             this.defaultCamoForType = false;
             this.moneyReward = 50;
         } else if ("normal".equalsIgnoreCase(humanType)){
-            this.originalSpeed = 1.0;
-            this.health = 500;
+            this.originalSpeed = 0.7;
+            this.health = 40;
             this.hitboxDiameter = 50;
             this.currentSpriteVariants = List.of("human_normal0.png", "human_normal1.png", "human_normal2.png");
             this.defaultCamoForType = false;
-            this.moneyReward = 50;
+            this.moneyReward = 25;
         } else if ("bodybuilder".equalsIgnoreCase(humanType)){
-            this.originalSpeed = 0.8;
-            this.health = 1500;
+            this.originalSpeed = 0.6;
+            this.health = 900;
             this.hitboxDiameter = 80;
             this.currentSpriteVariants = List.of("human_bodybuilder.png");
             this.defaultCamoForType = false;
             this.moneyReward = 75;
         } else if ("businessman".equalsIgnoreCase(humanType)){
             this.originalSpeed = 1.3;
-            this.health = 750;
+            this.health = 300;
             this.hitboxDiameter = 60;
             this.currentSpriteVariants = List.of("human_businessman.png");
             this.defaultCamoForType = false;
             this.moneyReward = 100;
         } else if ("bossbaby".equalsIgnoreCase(humanType)){
-            this.originalSpeed = 0.7;
-            this.health = 3000;
+            this.originalSpeed = 0.3;
+            this.health = 10000;
             this.hitboxDiameter = 200;
             this.currentSpriteVariants = List.of("human_bigbaby.png");
             this.moneyReward = 500;

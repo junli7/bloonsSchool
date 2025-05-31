@@ -331,26 +331,33 @@ public class GamePanel extends JPanel{
 
     private void initializeWaveDefinitions(){
         this.waveDefinitions = new ArrayList<>();
-        addWave(new SpawnInstruction("baby", 10, 0, 30, false));
-        addWave(new SpawnInstruction("baby", 15, 0, 25, false),
-                new SpawnInstruction("kid", 5, 60, 40, false));
-        addWave(new SpawnInstruction("kid", 10, 0, 30, false),
-                new SpawnInstruction("baby", 10, 50, 20, true));
-        addWave(new SpawnInstruction("normal", 8, 0, 50, false),
-                new SpawnInstruction("kid", 10, 40, 25, false));
+        addWave(new SpawnInstruction("normal", 5, 2, 30, false));
+
+        addWave(new SpawnInstruction("normal", 10, 0, 25, false),
+                new SpawnInstruction("kid", 5, 10, 40, false));
+
+        addWave(new SpawnInstruction("normal", 10, 0, 30, false),
+                new SpawnInstruction("kid", 10, 50, 20, false));
+
+        addWave(new SpawnInstruction("kid", 5, 0, 50, false));
+
         addWave(new SpawnInstruction("businessman", 5, 0, 60, false),
-                new SpawnInstruction("normal", 10, 30, 30, true));
-        addWave(new SpawnInstruction("bodybuilder", 3, 0, 100, false),
-                new SpawnInstruction("businessman", 7, 60, 40, false),
-                new SpawnInstruction("kid", 15, 40, 20, true));
+                new SpawnInstruction("normal", 10, 30, 30, false));
+
+        addWave(new SpawnInstruction("bodybuilder", 1, 0, 100, false),
+                new SpawnInstruction("baby", 20, 60, 40, false));
+
         addWave(new SpawnInstruction("normal", 20, 0, 15, false),
                 new SpawnInstruction("bodybuilder", 2, 30, 80, true));
+
         addWave(new SpawnInstruction("businessman", 10, 0, 30, true),
                 new SpawnInstruction("kid", 20, 20, 15, true));
+
         addWave(new SpawnInstruction("bodybuilder", 5, 0, 60, false),
                 new SpawnInstruction("bossbaby", 1, 120, 0, false),
                 new SpawnInstruction("normal", 15, 30, 20, true));
-        addWave(new SpawnInstruction("bossbaby", 2, 0, 180, true),
+
+        addWave(new SpawnInstruction("bossbaby", 2, 20, 180, true),
                 new SpawnInstruction("bodybuilder", 8, 60, 40, true),
                 new SpawnInstruction("businessman", 10, 30, 25, true));
     }
@@ -450,25 +457,23 @@ public class GamePanel extends JPanel{
 
         for (int i = 0; i < numGroups; i++){
             String type;
-            int typeRoll = random.nextInt(100) + difficultyFactor * 2;
-
+            int typeRoll = random.nextInt(100) + difficultyFactor * 3;
+            boolean camo = false;
+            
             if (typeRoll > 100 && difficultyFactor > 1) type = "bossbaby";
             else if (typeRoll > 85) type = "bodybuilder";
             else if (typeRoll > 70) type = "businessman";
-            else if (typeRoll > 50) type = "normal";
+            else if (typeRoll > 50) type = "baby";
             else if (typeRoll > 25) type = "kid";
-            else type = "baby";
+            else type = "normal";
 
-            if (type.equals("bossbaby") && (difficultyFactor < 3 || random.nextInt(Math.max(1,difficultyFactor)) < 2) && i < numGroups / 2){
-                type = "bodybuilder";
-            }
 
-            int count = 1 + random.nextInt(2 + difficultyFactor / 2) + difficultyFactor / 3;
+
+            int count = 3 + random.nextInt(2 + difficultyFactor / 2) + difficultyFactor / 3;
             count = Math.min(type.equals("bossbaby") ? (2 + difficultyFactor/3) : 15, count);
 
             int delayAfterPrevious = Math.max(10, 100 - difficultyFactor * 8);
             int intervalPerUnit = Math.max(5, 35 - difficultyFactor * 2);
-            boolean camo = random.nextDouble() < (0.15 + difficultyFactor * 0.07);
 
             spawns.add(new SpawnInstruction(type, count, (i == 0 ? 0 : delayAfterPrevious), intervalPerUnit, camo));
         }
@@ -531,7 +536,6 @@ public class GamePanel extends JPanel{
         g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         g2d.drawImage(mapBackgroundSprite, 0, 0, getWidth(), getHeight(), null);
         //removelater
-        map.draw(g2d);
         for (Human h : new ArrayList<>(humans)) h.draw(g2d);
         for (Monkey m : new ArrayList<>(monkeys)) m.draw(g2d);
         

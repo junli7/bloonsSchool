@@ -7,7 +7,7 @@ public class MainFrame {
             JFrame frame= new JFrame("Italian Brainrot Tower Defense");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-            GameState gameState= new GameState(150, 10); //initial money initial lives
+            GameState gameState= new GameState(750, 100); //initial money initial lives
 
             int gamePanelNominalWidth= 800; 
             int gamePanelHeight= 600;

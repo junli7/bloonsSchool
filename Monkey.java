@@ -167,8 +167,9 @@ public class Monkey {
         if (this.getClass() == Monkey.class){  //BRR BRR
             if (archetypeKey.equals(archetypeDART_SNIPER)){
                 this.range *= 1.8; 
-                this.shootCooldown = (long)(this.shootCooldown * 1.7);
-                this.projectileDamage = (int)Math.pow(this.projectileDamage,2)-1;
+                this.shootCooldown = (long)(this.shootCooldown * 3);
+                this.projectileDamage = 120;
+                this.projectileSpeed = 20;
 
             } else if (archetypeKey.equals(archetypeDART_QUICKFIRE)){
                 this.shootCooldown = (long)(this.shootCooldown * 0.4); 
@@ -176,7 +177,7 @@ public class Monkey {
             }
         } else if (this instanceof MonkeyB){ //TUNG TUNG
             if (archetypeKey.equals(archetypeBOMB_FRAGS)){
-                this.projectileAoeRadius *= 1.6;
+                this.projectileAoeRadius *= 1.5;
             } else if (archetypeKey.equals(archetypeBOMB_CONCUSSION)){
                 this.projectileDamage *= 2;
             }
@@ -218,12 +219,12 @@ public class Monkey {
         this.level++;
         calculateUpgradeCost(); 
 
-        this.range += 5;
-        this.projectileSpeed += 0.2;
+        this.range *=1.1;
+        this.projectileSpeed *=1.25;
         this.shootCooldown = Math.max(100, this.shootCooldown - 25);
 
         if (this.projectileDamage > 0){
-            this.projectileDamage += 10;
+            this.projectileDamage*=1.25;
         }
         if (this.level >= 5 && !this.canSeeCamo){
             boolean grantedByArchetype = false; 

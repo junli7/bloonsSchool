@@ -55,7 +55,7 @@ public class Monkey {
     protected String chosenArchetype = archetypeNONE;
     protected boolean hasChosenArchetype = false;
 
-    protected int totalSpentOnMonkey;
+    protected int totalSpentOnMonkey = COST;
     public static final double sellPercentage = 0.7;
 
     public Monkey(int nx, int ny, int nlevel){

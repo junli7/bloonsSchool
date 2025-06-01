@@ -68,7 +68,7 @@ public class Human{
             this.hitboxDiameter = 80;
             this.currentSpriteVariants = List.of("human_bodybuilder.png");
             this.defaultCamoForType = false;
-            this.moneyReward = 50;
+            this.moneyReward = 20;
         } 
         else if ("businessman".equalsIgnoreCase(humanType)){
             this.originalSpeed = 1.3;
@@ -76,7 +76,7 @@ public class Human{
             this.hitboxDiameter = 60;
             this.currentSpriteVariants = List.of("human_businessman.png");
             this.defaultCamoForType = false;
-            this.moneyReward = 70;
+            this.moneyReward = 30;
         } 
         else if ("bossbaby".equalsIgnoreCase(humanType)){
             this.originalSpeed = 0.5;
@@ -100,6 +100,14 @@ public class Human{
             this.currentSpriteVariants = List.of("human_bossninja.png");
             this.defaultCamoForType = true;
             this.moneyReward = 200;
+        }
+        else if ("bossninja+".equalsIgnoreCase(humanType)){
+            this.originalSpeed = 2.2;
+            this.health = 50000;
+            this.hitboxDiameter = 300;
+            this.currentSpriteVariants = List.of("human_bossninja.png");
+            this.defaultCamoForType = true;
+            this.moneyReward = 1000;
         }
 
         this.currentSpeed = this.originalSpeed;

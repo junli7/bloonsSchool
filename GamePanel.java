@@ -348,10 +348,10 @@ public class GamePanel extends JPanel{
                 new SpawnInstruction("ninja", 20, 60, 40, true));
 
         addWave(new SpawnInstruction("normal", 20, 0, 15, false),
-                new SpawnInstruction("bodybuilder", 2, 30, 80, true));
+                new SpawnInstruction("bodybuilder", 2, 30, 80, false));
 
-        addWave(new SpawnInstruction("businessman", 10, 0, 30, true),
-                new SpawnInstruction("kid", 20, 20, 15, true));
+        addWave(new SpawnInstruction("businessman", 10, 0, 30, false),
+                new SpawnInstruction("kid", 20, 20, 15, firePropertyChange));
 
         addWave(new SpawnInstruction("bodybuilder", 5, 0, 60, false),
                 new SpawnInstruction("bossbaby", 1, 120, 0, false),
@@ -470,11 +470,12 @@ public class GamePanel extends JPanel{
             boolean camo = false;
             
             if (typeRoll > 100 && difficultyFactor > 1){
-                type = "bossninja";
+                type = "bossninja+";
                 camo = true;
             }
-            else if (typeRoll > 85) type = "bossbaby";
-            else type = "bodybuilder";
+            else if (typeRoll > 85) type = "bossninja";
+            else if (typeRoll > 50) type = "ninja";
+            else type = "bossbaby";
 
 
 

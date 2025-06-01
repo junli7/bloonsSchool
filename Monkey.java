@@ -109,7 +109,7 @@ public class Monkey {
     }
 
     protected void calculateUpgradeCost(){
-        this.upgradeCost = 50 + (this.level * 125);
+        this.upgradeCost = 50 + (this.level * 125) + (int)Math.pow(this.level,5);
     }
 
     public String getChosenArchetype(){ return chosenArchetype; }

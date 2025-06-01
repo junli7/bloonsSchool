@@ -109,7 +109,7 @@ public class Monkey {
     }
 
     protected void calculateUpgradeCost(){
-        this.upgradeCost = 50 + (this.level * 75);
+        this.upgradeCost = 50 + (this.level * 125);
     }
 
     public String getChosenArchetype(){ return chosenArchetype; }
@@ -167,18 +167,19 @@ public class Monkey {
         if (this.getClass() == Monkey.class){  //BRR BRR
             if (archetypeKey.equals(archetypeDART_SNIPER)){
                 this.range *= 1.8; 
-                this.shootCooldown = (long)(this.shootCooldown * 3);
-                this.projectileDamage = 120;
+                this.shootCooldown = (long)(this.shootCooldown * 5);
+                this.projectileDamage = 105;
                 this.projectileSpeed = 20;
 
             } else if (archetypeKey.equals(archetypeDART_QUICKFIRE)){
-                this.shootCooldown = (long)(this.shootCooldown * 0.2); 
+                this.shootCooldown = (long)(this.shootCooldown * 0.2);
+                this.projectileDamage +=40; 
             }
         } else if (this instanceof MonkeyB){ //TUNG TUNG
             if (archetypeKey.equals(archetypeBOMB_FRAGS)){
                 this.projectileAoeRadius *= 1.5;
             } else if (archetypeKey.equals(archetypeBOMB_CONCUSSION)){
-                this.projectileDamage *= 2;
+                this.projectileDamage +=15;
             }
         }
     }
@@ -218,13 +219,14 @@ public class Monkey {
         this.level++;
         calculateUpgradeCost(); 
 
-        this.range *=1.1;
+        this.range *=1.2;
         this.projectileSpeed *=1.25;
         this.shootCooldown = Math.max(100, this.shootCooldown - 25);
 
         if (this.projectileDamage > 0){
-            this.projectileDamage*=1.25;
+            this.projectileDamage*=1.8;
         }
+
         if (this.level >= 5 && !this.canSeeCamo){
             boolean grantedByArchetype = false; 
             if(this instanceof MonkeyC && ((MonkeyC)this).chosenArchetype.equals(archetypeICE_BRITTLE)){

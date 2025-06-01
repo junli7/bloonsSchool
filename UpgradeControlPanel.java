@@ -17,8 +17,8 @@ public class UpgradeControlPanel extends JPanel {
         this.upgradeGUI_instance = new UpgradeGUI();
         this.currentSelectedMonkey = null;
 
-        setBackground(new Color(210, 210, 210)); 
-        setOpaque(true); 
+        setBackground(new Color(200, 200, 200)); 
+        setOpaque(true);
         
         setBorder(BorderFactory.createMatteBorder(0, 0, 0, 1, Color.GRAY));
         

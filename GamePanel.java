@@ -331,21 +331,21 @@ public class GamePanel extends JPanel{
 
     private void initializeWaveDefinitions(){
         this.waveDefinitions = new ArrayList<>();
-        addWave(new SpawnInstruction("normal", 5, 2, 30, false));
+        addWave(new SpawnInstruction("normal", 5, 10, 30, false));
 
-        addWave(new SpawnInstruction("normal", 10, 0, 25, false),
+        addWave(new SpawnInstruction("normal", 10, 10, 25, false),
                 new SpawnInstruction("kid", 5, 10, 40, false));
 
-        addWave(new SpawnInstruction("normal", 10, 0, 30, false),
+        addWave(new SpawnInstruction("normal", 10, 10, 30, false),
                 new SpawnInstruction("kid", 10, 50, 20, false));
 
-        addWave(new SpawnInstruction("kid", 5, 0, 50, false));
+        addWave(new SpawnInstruction("kid", 5, 5, 50, false));
 
         addWave(new SpawnInstruction("businessman", 5, 0, 60, false),
                 new SpawnInstruction("normal", 10, 30, 30, false));
 
         addWave(new SpawnInstruction("bodybuilder", 1, 0, 100, false),
-                new SpawnInstruction("baby", 20, 60, 40, false));
+                new SpawnInstruction("ninja", 20, 60, 40, true));
 
         addWave(new SpawnInstruction("normal", 20, 0, 15, false),
                 new SpawnInstruction("bodybuilder", 2, 30, 80, true));
@@ -355,11 +355,20 @@ public class GamePanel extends JPanel{
 
         addWave(new SpawnInstruction("bodybuilder", 5, 0, 60, false),
                 new SpawnInstruction("bossbaby", 1, 120, 0, false),
-                new SpawnInstruction("normal", 15, 30, 20, true));
+                new SpawnInstruction("ninja", 15, 30, 20, true));
 
-        addWave(new SpawnInstruction("bossbaby", 2, 20, 180, true),
-                new SpawnInstruction("bodybuilder", 8, 60, 40, true),
-                new SpawnInstruction("businessman", 10, 30, 25, true));
+        addWave(new SpawnInstruction("bossbaby", 2, 20, 180, false),
+                new SpawnInstruction("bodybuilder", 8, 60, 40, false),
+                new SpawnInstruction("businessman", 10, 30, 25, false));
+
+        addWave(new SpawnInstruction("bossninja", 1, 20, 180, true));
+
+        addWave(new SpawnInstruction("bodybuilder", 5, 0, 60, false),
+                new SpawnInstruction("bossbaby", 5, 120, 0, false),
+                new SpawnInstruction("ninja", 15, 30, 20, true));
+        
+        addWave(new SpawnInstruction("bossninja", 2, 0, 60, false),
+                new SpawnInstruction("ninja", 30, 30, 20, true));
     }
 
     private void addWave(SpawnInstruction... instructions){
@@ -460,12 +469,12 @@ public class GamePanel extends JPanel{
             int typeRoll = random.nextInt(100) + difficultyFactor * 3;
             boolean camo = false;
             
-            if (typeRoll > 100 && difficultyFactor > 1) type = "bossbaby";
-            else if (typeRoll > 85) type = "bodybuilder";
-            else if (typeRoll > 70) type = "businessman";
-            else if (typeRoll > 50) type = "baby";
-            else if (typeRoll > 25) type = "kid";
-            else type = "normal";
+            if (typeRoll > 100 && difficultyFactor > 1){
+                type = "bossninja";
+                camo = true;
+            }
+            else if (typeRoll > 85) type = "bossbaby";
+            else type = "bodybuilder";
 
 
 
@@ -503,7 +512,7 @@ public class GamePanel extends JPanel{
                 gameState.addMoney(h.getMoneyReward());
                 humanIterator.remove();
             } else if (h.hasReachedEnd()){
-                gameState.loseLife(1);
+                gameState.loseLife(h.getHealth()/10);
                 humanIterator.remove();
                 if (gameState.isGameOver()){
                     handleGameOver();

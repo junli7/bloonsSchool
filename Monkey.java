@@ -166,14 +166,14 @@ public class Monkey {
     protected void applyArchetypeStats(String archetypeKey){
         if (this.getClass() == Monkey.class){  //BRR BRR
             if (archetypeKey.equals(archetypeDART_SNIPER)){
-                this.range *= 1.8; 
-                this.shootCooldown = (long)(this.shootCooldown * 5);
+                this.range *= 3; 
+                this.shootCooldown = (long)(this.shootCooldown * 3);
                 this.projectileDamage = 105;
                 this.projectileSpeed = 20;
 
             } else if (archetypeKey.equals(archetypeDART_QUICKFIRE)){
                 this.shootCooldown = (long)(this.shootCooldown * 0.2);
-                this.projectileDamage +=40; 
+                this.projectileDamage +=29; 
             }
         } else if (this instanceof MonkeyB){ //TUNG TUNG
             if (archetypeKey.equals(archetypeBOMB_FRAGS)){
@@ -219,7 +219,7 @@ public class Monkey {
         this.level++;
         calculateUpgradeCost(); 
 
-        this.range *=1.2;
+        this.range *=1.1;
         this.projectileSpeed *=1.25;
         this.shootCooldown = Math.max(100, this.shootCooldown - 25);
 

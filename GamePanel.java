@@ -367,7 +367,7 @@ public class GamePanel extends JPanel{
                 new SpawnInstruction("bossbaby", 5, 120, 0, false),
                 new SpawnInstruction("ninja", 15, 30, 20, true));
         
-        addWave(new SpawnInstruction("bossninja", 2, 0, 60, false),
+        addWave(new SpawnInstruction("bossbaby", 1, 0, 60, false),
                 new SpawnInstruction("ninja", 30, 30, 20, true));
     }
 
@@ -461,7 +461,7 @@ public class GamePanel extends JPanel{
 
     private void generateProceduralWave(int waveNum){
         List<SpawnInstruction> spawns = new ArrayList<>();
-        int difficultyFactor = waveNum - waveDefinitions.size();
+        int difficultyFactor = waveNum-5;
         int numGroups = Math.min(8, 2 + difficultyFactor + random.nextInt(2));
 
         for (int i = 0; i < numGroups; i++){
@@ -482,8 +482,8 @@ public class GamePanel extends JPanel{
             int count = 3 + random.nextInt(2 + difficultyFactor / 2) + difficultyFactor / 3;
             count = Math.min(type.equals("bossbaby") ? (2 + difficultyFactor/3) : 15, count);
 
-            int delayAfterPrevious = Math.max(10, 100 - difficultyFactor * 8);
-            int intervalPerUnit = Math.max(5, 35 - difficultyFactor * 2);
+            int delayAfterPrevious = Math.max(20, 100 - difficultyFactor * 8);
+            int intervalPerUnit = Math.max(20, 35 - difficultyFactor * 2);
 
             spawns.add(new SpawnInstruction(type, count, (i == 0 ? 0 : delayAfterPrevious), intervalPerUnit, camo));
         }

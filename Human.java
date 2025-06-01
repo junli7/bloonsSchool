@@ -44,7 +44,7 @@ public class Human{
             this.hitboxDiameter = 50;
             this.currentSpriteVariants = List.of("human_baby.png");
             this.defaultCamoForType = false;
-            this.moneyReward = 25;
+            this.moneyReward = 5;
         } 
         else if ("kid".equalsIgnoreCase(humanType)){
             this.originalSpeed = 2;
@@ -60,7 +60,7 @@ public class Human{
             this.hitboxDiameter = 50;
             this.currentSpriteVariants = List.of("human_normal0.png", "human_normal1.png", "human_normal2.png");
             this.defaultCamoForType = false;
-            this.moneyReward = 15;
+            this.moneyReward = 10;
         } 
         else if ("bodybuilder".equalsIgnoreCase(humanType)){
             this.originalSpeed = 0.8;
@@ -68,7 +68,7 @@ public class Human{
             this.hitboxDiameter = 80;
             this.currentSpriteVariants = List.of("human_bodybuilder.png");
             this.defaultCamoForType = false;
-            this.moneyReward = 20;
+            this.moneyReward = 16;
         } 
         else if ("businessman".equalsIgnoreCase(humanType)){
             this.originalSpeed = 1.3;
@@ -76,14 +76,14 @@ public class Human{
             this.hitboxDiameter = 60;
             this.currentSpriteVariants = List.of("human_businessman.png");
             this.defaultCamoForType = false;
-            this.moneyReward = 30;
+            this.moneyReward = 12;
         } 
         else if ("bossbaby".equalsIgnoreCase(humanType)){
             this.originalSpeed = 0.5;
             this.health = 10000;
             this.hitboxDiameter = 200;
             this.currentSpriteVariants = List.of("human_bigbaby.png");
-            this.moneyReward = 200;
+            this.moneyReward = 150;
         }
         else if ("ninja".equalsIgnoreCase(humanType)){
             this.originalSpeed = 3;
@@ -95,11 +95,11 @@ public class Human{
         }
         else if ("bossninja".equalsIgnoreCase(humanType)){
             this.originalSpeed = 2.2;
-            this.health = 10000;
+            this.health = 22000;
             this.hitboxDiameter = 200;
             this.currentSpriteVariants = List.of("human_bossninja.png");
             this.defaultCamoForType = true;
-            this.moneyReward = 200;
+            this.moneyReward = 120;
         }
 
         this.currentSpeed = this.originalSpeed;

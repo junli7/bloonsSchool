@@ -101,14 +101,6 @@ public class Human{
             this.defaultCamoForType = true;
             this.moneyReward = 200;
         }
-        else if ("bossninja+".equalsIgnoreCase(humanType)){
-            this.originalSpeed = 2.2;
-            this.health = 50000;
-            this.hitboxDiameter = 300;
-            this.currentSpriteVariants = List.of("human_bossninja.png");
-            this.defaultCamoForType = true;
-            this.moneyReward = 1000;
-        }
 
         this.currentSpeed = this.originalSpeed;
         this.camo = isCamoFromSpawnInstruction || this.defaultCamoForType;

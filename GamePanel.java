@@ -334,7 +334,7 @@ public class GamePanel extends JPanel{
         addWave(new SpawnInstruction("normal", 5, 10, 30, false));
 
         addWave(new SpawnInstruction("normal", 10, 10, 25, false),
-                new SpawnInstruction("kid", 5, 10, 40, false));
+                new SpawnInstruction("baby", 5, 10, 40, false));
 
         addWave(new SpawnInstruction("normal", 10, 10, 30, false),
                 new SpawnInstruction("kid", 10, 50, 20, false));
@@ -351,7 +351,7 @@ public class GamePanel extends JPanel{
                 new SpawnInstruction("bodybuilder", 2, 30, 80, false));
 
         addWave(new SpawnInstruction("businessman", 10, 0, 30, false),
-                new SpawnInstruction("kid", 20, 20, 15, false));
+                new SpawnInstruction("baby", 20, 20, 15, false));
 
         addWave(new SpawnInstruction("bodybuilder", 5, 0, 60, false),
                 new SpawnInstruction("bossbaby", 1, 120, 0, false),

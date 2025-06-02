@@ -1,6 +1,6 @@
 # **Italian Brainrot Tower Defense** 
 
-This project is a simple tower defense game It combines aspects of **BloonsTD** with **italian brainrot** main objective of the game is to survive as many rounds as possible by placing and upgrading italian brainrot characters enemies are different variants of humans attempting to traverse the path
+This project is a simple tower defense game It is the combination of **BloonsTD** with **italian brainrot**. The main objective of the game is to survive as many rounds as possible by placing and upgrading italian brainrot characters. Enemies are different variants of humans attempting to traverse the path. If a human makes it past, then you lose a life. 
 
 The <ins> GamePanel</ins> class handles visuals (drawing), user input, and the game loop This includes movement of enemies (humans), monkeys (characters) and wave management 
 
@@ -8,7 +8,7 @@ The <ins> GameState</ins> class as suggested in the name, manages the state of t
 
 The <ins> Monkey</ins> class creates the characters to be placed and manages the upgrading stats and attacking <ins> MonkeyB</ins> and <ins> MonkeyC</ins> are both child classes of Monkey with specilized abilities: (Exposives and Slowing Projectiles respectively)
 
-<ins> Human</ins> objects are the enemies moving along the path and this movement is handled by the <ins> Map</ins> class 
+<ins> Human</ins> objects are the enemies moving along the path and this movement is handled by the <ins> Map</ins> class. They are able to have different variants.
 
 <ins> Projectile</ins> represents the objects (projectiles) fired by all monkeys 
 
@@ -23,8 +23,7 @@ The <ins> SpriteManager</ins> handles loading the images as well as resizing the
 
 ## Variables Used
 
-> [!NOTE]
-> Monkey refers to the italian brainrot characters
+
 
 This section explains all important variables used across all classes
 ‎
@@ -400,7 +399,7 @@ Constructor Methods:
 
 Game Logic and Update Methods:
 
-    Implement the core game mechanics, including movement, targeting, attacking, and state transitions These methods are typically called repeatedly within the game loop
+    Implement the core game mechanics, including movement, targeting, attacking, and state transitions These methods are called repeatedly within the game loop
 
 Drawing and Rendering Methods:
 
@@ -433,7 +432,7 @@ UI Component Styling and Creation Methods:
 
 Rationale
 
-The project is structured using Swing for the graphical user interface, leveraging JPanel for the main game display and Timer for the game loop MainFrame acts as the primary application window, orchestrating the various panels Separation of concerns is achieved by having GamePanel manage rendering and interaction, while GameState encapsulates the core game variables and their manipulation Human and Monkey classes define the core entities with their own update and draw logic Map class provides the pathfinding data This modular design aims for maintainability and clarity use of MouseAdapter and MouseMotionAdapter simplifies event handling for user input Wave management is designed to support both pre-defined and procedurally generated waves, allowing for extensible gameplay Monkeys have a clear upgrade path system with archetypes to introduce strategic depth, and specialized monkey types like MonkeyB and MonkeyC extend the base functionality Projectile class handles the behavior of shots fired by monkeys Dedicated UI panels (SideInfoPanel, UpgradeControlPanel) improve user experience by providing clear information and interactive elements SpriteManager centralizes image loading and caching for efficient resource management UpgradeGUI specifically encapsulates the visual and interaction logic for the upgrade interface, making UpgradeControlPanel cleaner
+The project is structured using Swing for the graphical user interface, leveraging JPanel for the main game display and Timer for the game loop MainFrame acts as the primary application window, orchestrating the various panels. Separation of concerns is achieved by having GamePanel manage rendering and interaction, while GameState encapsulates the core game variables and their manipulation Human and Monkey classes define the core entities with their own update and draw logic Map class provides the pathfinding data This modular design aims for maintainability and clarity use of MouseAdapter and MouseMotionAdapter simplifies event handling for user input Wave management is designed to support both pre-defined and procedurally generated waves, allowing for extensible gameplay Monkeys have a clear upgrade path system with archetypes to introduce strategic depth, and specialized monkey types like MonkeyB and MonkeyC extend the base functionality Projectile class handles the behavior of shots fired by monkeys Dedicated UI panels (SideInfoPanel, UpgradeControlPanel) improve user experience by providing clear information and interactive elements SpriteManager centralizes image loading and caching for efficient resource management UpgradeGUI specifically encapsulates the visual and interaction logic for the upgrade interface, making UpgradeControlPanel cleaner
 Dependencies
 
 This project is written in Java and relies on the following standard Java libraries:
@@ -484,36 +483,29 @@ Files Used
 
     UpgradeGUIjava: Defines the UpgradeGUI class, which handles the drawing and interaction logic for the monkey upgrade interface within the UpgradeControlPanel
 
-    map_backgroundpng (Expected, based on usage): Image file for the game map background
+    map_background.png): Image file for the game map background
 
-    human_babypng, human_kid0png, human_kid1png, human_normal0png, human_normal1png, human_normal2png, human_bodybuilderpng, human_businessmanpng, human_bigbabypng, human_ninjapng, human_bossninjapng (Expected, based on usage): Image files for various human sprites
+    human_baby.png, human_kid0.png, human_kid1.png, human_normal0.png, human_normal1.png, human_normal2.png, human_bodybuilder.png, human_businessman.png, human_bigbaby.png, human_ninja.png, human_bossninja.png: Image files for various human sprites
 
-    monkey_base_idlepng, monkey_base_shootpng (Expected, based on usage): Image files for base monkey sprites
+    monkey_base_idle.png, monkey_base_shoot.png : Image files for base monkey sprites
 
-    monkey_bomber_idlepng, monkey_bomber_shootpng (Expected, based on usage): Image files for Bomber Monkey sprites
+    monkey_bomber_idle.png, monkey_bomber_shoot.png : Image files for Bomber Monkey sprites
 
-    monkey_slow_idlepng, monkey_slow_shootpng (Expected, based on usage): Image files for Slow Monkey sprites
+    monkey_slow_idle.png, monkey_slow_shoot.png: Image files for Slow Monkey sprites
 
-    explosion_effectpng (Expected, based on usage): Image file for the explosion effect (used by MonkeyB)
+    explosion_effect.png: Image file for the explosion effect (used by MonkeyB)
 
-    project_slowpng (Expected, based on usage): Image file for the slow projectile/explosion effect (used by MonkeyC and Projectile)
+    project_slow.png: Image file for the slow projectile/explosion effect (used by MonkeyC and Projectile)
 
-    projectile_dartpng (Expected, based on usage): Default image file for projectiles
+    projectile_dart.png: Default image file for projectiles
 
-    projectile_bombpng (Expected, based on usage): Image file for bomb projectiles
+    projectile_bomb.png: Image file for bomb projectiles
 
 Compilation and Execution
 
 This project is a Java Swing application
 
-To Compile:
-Navigate to the root directory of your project where all java files are located in your terminal or command prompt
-
-javac *java
-
-This command will compile all Java source files in the current directory If your classes are organized into packages, you will need to adjust the javac command accordingly (eg, javac -d  src/*java)
-
-To Execute:
+Compile and Execute:
 After successful compilation, run the application by executing the MainFrame class, which contains the main method
 
 java MainFrame

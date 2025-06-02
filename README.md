@@ -1,6 +1,7 @@
-# **Italian Brainrot Tower Defense**
+# **Italian Brainrot Tower Defense** 
+![banner](https://myoctocat.com/assets/images/base-octocat.svg)
 
-This project is a simple tower defense game. It combines aspects of **BloonsTD** with **italian brainrot**. The main objective of the game is to survive as many rounds as possible by placing and upgrading italian brainrot characters. The enemies are different variants of humans attempting to traverse the path.
+This project is a simple tower defense game. It combines aspects of **BloonsTD** with **italian brainrot**. main objective of the game is to survive as many rounds as possible by placing and upgrading italian brainrot characters. enemies are different variants of humans attempting to traverse the path.
 
 The <ins> GamePanel</ins> class handles visuals (drawing), user input, and the game loop. This includes movement of enemies (humans), monkeys (characters) and wave management. 
 
@@ -28,126 +29,124 @@ This section explains all important variables used across all classes.
 **GamePanel Class Variables:**
 
 ```
-defaultMonkey (String): Constant string identifier for the default monkey type
+defaultMonkey (String): constant string identifier for the default monkey type
 
-bomberMonkey (String): Constant string identifier for the bomber monkey type
+bomberMonkey (String): constant string identifier for the bomber monkey type
 
-slowMonkey (String): Constant string identifier for the slow monkey type
+slowMonkey (String): constant string identifier for the slow monkey type
 
-monkeys (List): A list to store all active Monkey objects
+monkeys (List): list to store all active Monkey objects
 
-humans (List): A list to store all active Human objects
+humans (List): list to store all active Human objects
 
-selectedMonkey (Monkey): Reference to the currently selected Monkey (used for upgrading and selling)
+selectedMonkey (Monkey): refers to the current selected Monkey (used for upgrading and selling)
 
-upgradeControlPanelRef (UpgradeControlPanel): Reference to the UI panel for upgrades
+upgradeControlPanelRef (UpgradeControlPanel): refers to the UI panel for upgrades
 
-gameState (GameState): Reference to the GameState object managing game-wide parameters
+gameState (GameState): refers to the GameState object managing game-wide parameters
 
-map (Map): The gamemap, defining a path for humans
+map (Map): gamemap, defining a path for humans
 
-random (Random): A Random object used for procedural generation
+random (Random): Random object used for procedural generation
 
-waveDefinitions (List): A list of defined wave configurations
+waveDefinitions (List): list of defined wave configurations
 
 isPlacingMonkey (boolean): Boolean indicating if the user is currently in monkey placement mode
 
-placingMonkeyType (String): The type of monkey being placed
+placingMonkeyType (String): type of monkey being placed
 
-placementPreviewMonkey (Monkey): A temporary monkey shown before placement to indicate position and range
+placementPreviewMonkey (Monkey): temporary monkey shown before placement to indicate position and range
 
 placementValid (boolean): Boolean indicating if the current monkey placement position is valid
 
 placementMouseX, placementMouseY (int): Current mouse coordinates during monkey placement
 
-separationBuffer (double): A buffer distance used to ensure monkeys are not placed too close to each other or the path
+separationBuffer (double): buffer distance used to ensure monkeys are not placed too close to each other or the path
 
 gameIsOver (boolean): Boolean indicating if the game has ended
 
 restartButtonBounds (Rectangle): Defines the bounds of the restart game button
 
-restartButtonHoverColor (Color): Color of the restart button when hovered over.
+restartButtonHoverColor (Color): color of the restart button when hovered over.
 
-currentSpawnCooldownTicks (int): Countdown for the delay between enemy spawns.
+currentSpawnCooldownTicks (int): countdown for the delay between enemy spawns.
 
-currentProceduralWaveDefinition (WaveDefinition): The definition for a procedurally generated wave.
+currentProceduralWaveDefinition (WaveDefinition): defines a procedurally generated wave.
 
-lastProceduralWaveGenerated (int): Stores the wave number for which the last procedural wave was generated.
+lastProceduralWaveGenerated (int): stores the wave number for which the last procedural wave was generated.
 
 ```
 **GameState Class Variables:**
 ```
 
-money (int): Current in-game currency the player possesses.
+money (int):  amount of money the player has
 
-bloonsKilled (int): Total number of enemies killed by the player.
+bloonsKilled (int): total number of enemies killed by player
 
-currentWave (int): The current wave number the player is on.
+currentWave (int): current wave number
 
-lives (int): Current number of lives the player has remaining.
+lives (int): number of lives left
 
-initialLives (int): The starting number of lives for the game.
+initialLives (int): starting number of lives for the game
 
-initialMoney (int): The starting amount of money for the game.
+initialMoney (int): starting amount of money for the game
 ```
 **Human Class Variables:**
 ```
-x, y (double): Current coordinates of the human on the map.
+x, y (double): current coordinates of the human on the map
 
-currentSpeed (double): The current movement speed of the human.
+currentSpeed (double): current movement speed of the human
 
-originalSpeed (double): The base movement speed of the human.
+originalSpeed (double): base movement speed of the human
 
-hitboxDiameter (int): The diameter of the human's collision box.
+hitboxDiameter (int): diameter of the humans collision box
 
-health (int): Current health points of the human.
+health (int): current health points of the human
 
-currentPathIndex (int): The index of the current waypoint the human is moving towards.
+currentPathIndex (int): index of the current waypoint the human is moving towards
 
-camo (boolean): Indicates if the human is camouflaged (invisible to non-camo detecting monkeys).
+camo (boolean): boolean for if the human is camo (invisible to non-camo detecting monkeys)
 
-reachedEnd (boolean): Flag indicating if the human has reached the end of the path.
+reachedEnd (boolean): boolean indicating if the human has reached the end of the path
 
-sprite (BufferedImage): The image used to draw the human.
+sprite (BufferedImage): image used to draw the human
 
-currentAngleRadians (double): The current rotation angle of the human sprite.
+currentAngleRadians (double): current rotation angle of the human sprite
 
-humanType (String): The specific type of human (e.g., "normal", "kid", "bossbaby").
+humanType (String): specific type of human (ex. "human_baby)
 
-moneyReward (int): The amount of money rewarded to the player upon killing this human.
+moneyReward (int): amount of money rewarded to the player when human is killed
 
-slowEffectEndTimeMillis (long): Timestamp when any slow effect on the human will end.
+slowEffectEndTimeMillis (long): time when any slow effect on the human will end
 
-slowRate (double): The multiplier for slowing down human speed.
+slowRate (double): multiplier for slowing down human speed
 
-waypointThreshold (double): Distance threshold to consider a waypoint reached.
+random (Random): Random object for selecting sprites
 
-random (Random): A Random object for selecting sprite variants.
+currentSpriteVariants (List): list of possible sprite paths for this human type
 
-currentSpriteVariants (List): List of possible sprite paths for this human type.
-
-defaultCamoForType (boolean): Indicates if this human type is camouflaged by default.
+defaultCamoForType (boolean): boolean for if this human type is camo by default
 ```
 
 Map Class Variables:
 ```
-pathCoordinates (ArrayList): A list of Point objects defining the sequence of waypoints for enemies to follow.
+pathCoordinates (ArrayList): list of Point objects defining the points of the path for the enemies to follow.
 ```
 Monkey Class Variables:
 ```
 x, y (int): Current coordinates of the monkey on the map.
 
-range (double): The radius within which the monkey can detect and target humans.
+range (double): radius within which the monkey can detect and target humans.
 
-hitbox (double): The diameter of the monkey's collision box for placement.
+hitbox (double): diameter of the monkey's collision box for placement.
 
-upgradeCost (int): The cost to upgrade the monkey to the next level.
+upgradeCost (int): cost to upgrade the monkey to the next level.
 
-level (int): The current level of the monkey.
+level (int): current level of the monkey.
 
-projectiles (List): A list of projectiles currently fired by this monkey.
+projectiles (List): list of projectiles currently fired by this monkey.
 
-monkeyColor (Color): The base color used for drawing the monkey if no sprite is available.
+monkeyColor (Color): base color used for drawing the monkey if no sprite is available.
 
 COST (int): Static constant for the base cost of a default monkey.
 
@@ -177,47 +176,47 @@ lastShotTime (long): Timestamp of the last time the monkey fired a projectile.
 
 shootCooldown (long): Minimum time (in milliseconds) between shots.
 
-isSelected (boolean): Flag indicating if the monkey is currently selected by the user.
+isSelected (boolean): boolean indicating if the monkey is currently selected by the user.
 
-canSeeCamo (boolean): True if the monkey can detect camouflaged humans.
+canSeeCamo (boolean): True if the monkey can detect camo humans.
 
-idleSprite (BufferedImage): The image used when the monkey is idle.
+idleSprite (BufferedImage): image used when the monkey is idle.
 
-shootingSprite (BufferedImage): The image used when the monkey is shooting.
+shootingSprite (BufferedImage): image used when the monkey is shooting.
 
-idleSpritePath (String): File path for the idle sprite.
+idleSpritePath (String): file path for the idle sprite.
 
-shootingSpritePath (String): File path for the shooting sprite.
+shootingSpritePath (String): file path for the shooting sprite.
 
-isAnimatingShot (boolean): Flag indicating if the monkey is currently playing a shooting animation.
+isAnimatingShot (boolean): boolean indicating if the monkey is currently playing a shooting animation.
 
 shotAnimationEndTime (long): Timestamp when the shooting animation should end.
 
 SHOT_ANIMATION_DURATION_MS (long): Duration of the shooting animation.
 
-lastShotAngleRadians (double): The angle at which the last shot was fired, used for sprite rotation.
+lastShotAngleRadians (double): angle at which the last shot was fired, used for sprite rotation.
 
-archetypeNONE (String): Constant for no chosen archetype.
+archetypeNONE (String): constant for no chosen archetype.
 
-archetypeDART_SNIPER (String): Constant for Dart Monkey Sniper archetype.
+archetypeDART_SNIPER (String): constant for Dart Monkey Sniper archetype.
 
-archetypeDART_QUICKFIRE (String): Constant for Dart Monkey Quickfire archetype.
+archetypeDART_QUICKFIRE (String): constant for Dart Monkey Quickfire archetype.
 
-archetypeBOMB_FRAGS (String): Constant for Bomb Monkey Frags archetype.
+archetypeBOMB_FRAGS (String): constant for Bomb Monkey Frags archetype.
 
-archetypeBOMB_CONCUSSION (String): Constant for Bomb Monkey Concussion archetype.
+archetypeBOMB_CONCUSSION (String): constant for Bomb Monkey Concussion archetype.
 
-archetypeICE_PERMAFROST (String): Constant for Ice Monkey Permafrost archetype.
+archetypeICE_PERMAFROST (String): constant for Ice Monkey Permafrost archetype.
 
-archetypeICE_BRITTLE (String): Constant for Ice Monkey Brittle archetype.
+archetypeICE_BRITTLE (String): constant for Ice Monkey Brittle archetype.
 
-chosenArchetype (String): The identifier for the chosen upgrade path/archetype.
+chosenArchetype (String): identifier for the chosen upgrade path/archetype.
 
-hasChosenArchetype (boolean): Flag indicating if an archetype has been selected.
+hasChosenArchetype (boolean): boolean indicating if an archetype has been selected.
 
 totalSpentOnMonkey (int): Total money spent on purchasing and upgrading this monkey.
 
-sellPercentage (double): The percentage of total spent money that is returned when selling a monkey.
+sellPercentage (double): percentage of total spent money that is returned when selling a monkey.
 
 MonkeyB Class Variables:
 
@@ -227,23 +226,23 @@ monkeyBInitialRange (double): Static constant for the initial range of a Bomber 
 
 monkeyBInitialHitbox (double): Static constant for the initial hitbox of a Bomber Monkey.
 
-monkeyBIDLEspritePath (String): File path for the Bomber Monkey's idle sprite.
+monkeyBIDLEspritePath (String): file path for the Bomber Monkey's idle sprite.
 
-monkeyBSHOOTspritePath (String): File path for the Bomber Monkey's shooting sprite.
+monkeyBSHOOTspritePath (String): file path for the Bomber Monkey's shooting sprite.
 
-explosionSprite (String): File path for the explosion effect sprite.
+explosionSprite (String): file path for the explosion effect sprite.
 
 MonkeyC Class Variables:
 
 COST (int): Static constant for the base cost of a Slow Monkey.
 
-monkeyCIDLEspritePath (String): File path for the Slow Monkey's idle sprite.
+monkeyCIDLEspritePath (String): file path for the Slow Monkey's idle sprite.
 
-monkeyCSHOOTspritePath (String): File path for the Slow Monkey's shooting sprite.
+monkeyCSHOOTspritePath (String): file path for the Slow Monkey's shooting sprite.
 
-iceExplosionspritePath (String): File path for the ice explosion sprite.
+iceExplosionspritePath (String): file path for the ice explosion sprite.
 
-slowDurationMillis (int): The duration (in milliseconds) for which humans are slowed by this monkey's projectiles.
+slowDurationMillis (int): duration (in milliseconds) for which humans are slowed by this monkey's projectiles.
 ```
 Projectile Class Variables:
 ```
@@ -259,7 +258,7 @@ speed (double): Movement speed of the projectile.
 
 damage (int): Damage dealt by the projectile.
 
-target (Human): The Human object this projectile is targeting.
+target (Human): Human object this projectile is targeting.
 
 isExplosive (boolean): True if the projectile explodes on impact.
 
@@ -277,9 +276,9 @@ explosionDurationTicks (int): Total duration of the explosion visual.
 
 explosionCenterX, explosionCenterY (double): Center coordinates of the explosion.
 
-explosionSprite (BufferedImage): The image used for the explosion effect.
+explosionSprite (BufferedImage): image used for the explosion effect.
 
-sprite (BufferedImage): The image used for the projectile itself while flying.
+sprite (BufferedImage): image used for the projectile itself while flying.
 
 defaultSpritePath (String): Default sprite path for non-explosive, non-slowing projectiles.
 
@@ -291,9 +290,9 @@ hitThreshold (double): Distance threshold to consider a projectile to have hit i
 
 SideInfoPanel Class Variables:
 
-gameState (GameState): Reference to the GameState object.
+gameState (GameState): refers to the GameState object.
 
-gamePanel (GamePanel): Reference to the GamePanel object.
+gamePanel (GamePanel): refers to the GamePanel object.
 
 panelWidth (int): Static constant for the preferred width of the panel.
 
@@ -321,25 +320,25 @@ livesLabel (JLabel): Label displaying the current number of lives.
 ```
 SpriteManager Class Variables:
 ```
-spriteCache (Map<String, BufferedImage>): A cache to store loaded sprites, preventing redundant loading.
+spriteCache (Map<String, BufferedImage>): cache to store loaded sprites, preventing redundant loading.
 
-placeholderSprite (BufferedImage): A placeholder image used when a requested sprite cannot be loaded.
+placeholderSprite (BufferedImage): placeholder image used when a requested sprite cannot be loaded.
 ```
 UpgradeControlPanel Class Variables:
 ```
 upgradeGUI_instance (UpgradeGUI): An instance of UpgradeGUI to handle the drawing and logic of the upgrade interface.
 
-currentSelectedMonkey (Monkey): The monkey currently selected by the user, whose upgrade options are displayed.
+currentSelectedMonkey (Monkey): monkey currently selected by the user, whose upgrade options are displayed.
 
-gameState (GameState): Reference to the GameState object.
+gameState (GameState): refers to the GameState object.
 
-gamePanel_ref (GamePanel): Reference to the GamePanel object, used for selling monkeys or repainting.
+gamePanel_ref (GamePanel): refers to the GamePanel object, used for selling monkeys or repainting.
 
 panelWidth (int): Static constant for the preferred width of the panel.
 ```
 UpgradeGUI Class Variables:
 ```
-actionNONE, actionUpgradedOrArchetypeChosen, actionSOLD (int): Constants representing different actions resulting from a click.
+actionNONE, actionUpgradedOrArchetypeChosen, actionSOLD (int): constants representing different actions resulting from a click.
 
 upgradeButtonBounds (Rectangle): Defines the clickable area for the standard upgrade button.
 
@@ -371,23 +370,23 @@ buttonTextColor (Color): Text color for buttons.
 
 buttonFont, headerFont, statsFont, costFont, tooltipFont, sellButtonFont (Font): Different font styles used for text elements.
 
-currentTooltipText (String): The text displayed as a tooltip when hovering over a button.
+currentTooltipText (String): text displayed as a tooltip when hovering over a button.
 ```
 SpawnInstruction Inner Class Variables (within GamePanel):
 ```
-humanType (String): The type of human (enemy) to spawn (e.g., "normal", "kid", "bossbaby").
+humanType (String): type of human (enemy) to spawn (e.g., "normal", "kid", "bossbaby").
 
-count (int): The number of units of this type to spawn.
+count (int): number of units of this type to spawn.
 
 delayTicksAfterPreviousGroup (int): Delay in game ticks before this group starts spawning, after the previous group.
 
 intervalTicksPerUnit (int): Delay in game ticks between spawning individual units within this group.
 
-isCamo (boolean): Indicates if the human type is camouflaged.
+isCamo (boolean): Indicates if the human type is camo.
 ```
 WaveDefinition Inner Class Variables (within GamePanel):
 ```
-spawns (List): A list of SpawnInstruction objects defining the composition of the wave.
+spawns (List): list of SpawnInstruction objects defining the composition of the wave.
 ```
 
 Types of Methods
@@ -429,9 +428,10 @@ UI Component Styling and Creation Methods:
 
     Methods specifically designed to style and create Swing UI components, often involving setting colors, fonts, borders, and layout properties.
 
+
 Rationale
 
-The project is structured using Swing for the graphical user interface, leveraging JPanel for the main game display and Timer for the game loop. The MainFrame acts as the primary application window, orchestrating the various panels. Separation of concerns is achieved by having GamePanel manage rendering and interaction, while GameState encapsulates the core game variables and their manipulation. Human and Monkey classes define the core entities with their own update and draw logic. The Map class provides the pathfinding data. This modular design aims for maintainability and clarity. The use of MouseAdapter and MouseMotionAdapter simplifies event handling for user input. Wave management is designed to support both pre-defined and procedurally generated waves, allowing for extensible gameplay. Monkeys have a clear upgrade path system with archetypes to introduce strategic depth, and specialized monkey types like MonkeyB and MonkeyC extend the base functionality. The Projectile class handles the behavior of shots fired by monkeys. Dedicated UI panels (SideInfoPanel, UpgradeControlPanel) improve user experience by providing clear information and interactive elements. SpriteManager centralizes image loading and caching for efficient resource management. UpgradeGUI specifically encapsulates the visual and interaction logic for the upgrade interface, making UpgradeControlPanel cleaner.
+The project is structured using Swing for the graphical user interface, leveraging JPanel for the main game display and Timer for the game loop. MainFrame acts as the primary application window, orchestrating the various panels. Separation of concerns is achieved by having GamePanel manage rendering and interaction, while GameState encapsulates the core game variables and their manipulation. Human and Monkey classes define the core entities with their own update and draw logic. Map class provides the pathfinding data. This modular design aims for maintainability and clarity. use of MouseAdapter and MouseMotionAdapter simplifies event handling for user input. Wave management is designed to support both pre-defined and procedurally generated waves, allowing for extensible gameplay. Monkeys have a clear upgrade path system with archetypes to introduce strategic depth, and specialized monkey types like MonkeyB and MonkeyC extend the base functionality. Projectile class handles the behavior of shots fired by monkeys. Dedicated UI panels (SideInfoPanel, UpgradeControlPanel) improve user experience by providing clear information and interactive elements. SpriteManager centralizes image loading and caching for efficient resource management. UpgradeGUI specifically encapsulates the visual and interaction logic for the upgrade interface, making UpgradeControlPanel cleaner.
 Dependencies
 
 This project is written in Java and relies on the following standard Java libraries:
@@ -456,7 +456,7 @@ This project is written in Java and relies on the following standard Java librar
 
 Files Used
 
-    MainFrame.java: The main entry point of the application, responsible for setting up the JFrame and integrating all other panels.
+    MainFrame.java: main entry point of the application, responsible for setting up the JFrame and integrating all other panels.
 
     GamePanel.java: Contains the GamePanel class, responsible for game rendering, logic, and user interaction.
 

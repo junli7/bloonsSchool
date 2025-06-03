@@ -1,5 +1,13 @@
 # **Italian Brainrot Tower Defense** 
 
+## Contributors
+Derek Zhang
+
+Johnny Li
+
+## Intro
+
+
 This project is a simple tower defense game It combines aspects of **BloonsTD** with **italian brainrot** main objective of the game is to survive as many rounds as possible by placing and upgrading italian brainrot characters enemies are different variants of humans attempting to traverse the path
 
 The <ins> GamePanel</ins> class handles visuals (drawing), user input, and the game loop This includes movement of enemies (humans), monkeys (characters) and wave management 
@@ -7,6 +15,8 @@ The <ins> GamePanel</ins> class handles visuals (drawing), user input, and the g
 The <ins> GameState</ins> class as suggested in the name, manages the state of the game This includes the money, lives, and wave number 
 
 The <ins> Monkey</ins> class creates the characters to be placed and manages the upgrading stats and attacking <ins> MonkeyB</ins> and <ins> MonkeyC</ins> are both child classes of Monkey with specilized abilities: (Exposives and Slowing Projectiles respectively)
+> [!NOTE]
+> Monkeys refers to the towers, inspired from BloonsTd. In this case, the monkeys are italian brainrot characters
 
 <ins> Human</ins> objects are the enemies moving along the path and this movement is handled by the <ins> Map</ins> class 
 
@@ -22,9 +32,6 @@ The <ins> SpriteManager</ins> handles loading the images as well as resizing the
 
 
 ## Variables Used
-
-> [!NOTE]
-> Monkey refers to the italian brainrot characters
 
 This section explains all important variables used across all classes
 ‎
@@ -431,30 +438,31 @@ UI Component Styling and Creation Methods:
     Methods specifically designed to style and create Swing UI components, often involving setting colors, fonts, borders, and layout properties
 
 
-Rationale
+# Rationale
 
-The project is structured using Swing for the graphical user interface, leveraging JPanel for the main game display and Timer for the game loop MainFrame acts as the primary application window, orchestrating the various panels Separation of concerns is achieved by having GamePanel manage rendering and interaction, while GameState encapsulates the core game variables and their manipulation Human and Monkey classes define the core entities with their own update and draw logic Map class provides the pathfinding data This modular design aims for maintainability and clarity use of MouseAdapter and MouseMotionAdapter simplifies event handling for user input Wave management is designed to support both pre-defined and procedurally generated waves, allowing for extensible gameplay Monkeys have a clear upgrade path system with archetypes to introduce strategic depth, and specialized monkey types like MonkeyB and MonkeyC extend the base functionality Projectile class handles the behavior of shots fired by monkeys Dedicated UI panels (SideInfoPanel, UpgradeControlPanel) improve user experience by providing clear information and interactive elements SpriteManager centralizes image loading and caching for efficient resource management UpgradeGUI specifically encapsulates the visual and interaction logic for the upgrade interface, making UpgradeControlPanel cleaner
-Dependencies
+The project is organized with Swing for the graphical user interface, Timer for the game loop, and JPanel for the main game display. The main application window, MainFrame, coordinates the different panels. GameState contains the essential game variables and their manipulation, while GamePanel handles rendering and interaction, allowing for a separation of concerns. The core entities are defined by the Human and Monkey classes using their own updates and logic. The pathfinding data is provided by the Map class. The goals of this modular design are clarity and maintainability. Event handling for user input is made simpler by using MouseAdapter and MouseMotionAdapter. Wave management enables extensible gameplay by supporting both procedurally generated and pre-defined waves. Specialized monkey types like MonkeyB and MonkeyC expand the basic functionality, and monkeys have a clear upgrade path system with archetypes to add strategic depth. The behavior of monkey shots is handled by the projectile class. By offering interactive features and clear information, dedicated user interface panels (SideInfoPanel, UpgradeControlPanel) enhance the user experience. SpriteManager streamlines resource management by centralizing image loading and caching. UpgradeControlPanel is cleaner because UpgradeGUI specifically encapsulates the upgrade interface's visual and interaction logic.
+
+# Dependencies
 
 This project is written in Java and relies on the following standard Java libraries:
 
-    javaxswing*: For GUI components and event handling
+    javaxswing*: for GUI components and event handling
 
-    javaawt*: For graphics, drawing, and basic UI elements (eg, Color, Point, Rectangle, Graphics2D, Font, FontMetrics, BasicStroke, AlphaComposite, Composite, Image, MouseInfo)
+    javaawt*: for graphics, drawing, and basic UI elements (eg, Color, Point, Rectangle, Graphics2D, Font, FontMetrics, BasicStroke, AlphaComposite, Composite, Image, MouseInfo)
 
-    javaawtevent*: For event handling (mouse, action)
+    javaawtevent*: for event handling (mouse, action)
 
-    javaawtimageBufferedImage: For image handling
+    javaawtimageBufferedImage: for image handling
 
-    javaawtgeomAffineTransform: For applying transformations like rotation to graphics
+    javaawtgeomAffineTransform: for applying transformations like rotation to graphics
 
-    javaawtgeomLine2DDouble: For geometric calculations related to path segments
+    javaawtgeomLine2DDouble: for geometric calculations related to path segments
 
-    javautil*: For data structures like ArrayList, List, Iterator, Random, HashMap, Map
+    javautil*: for data structures like ArrayList, List, Iterator, Random, HashMap, Map
 
-    javaioIOException, javaioInputStream: For input/output operations, particularly for image loading
+    javaioIOException, javaioInputStream: for input/output operations, particularly for image loading
 
-    javaximageioImageIO: For reading image files
+    javaximageioImageIO: for reading image files
 
 Files Used
 
@@ -502,7 +510,7 @@ Files Used
 
     projectile_bombpng (Expected, based on usage): Image file for bomb projectiles
 
-Compilation and Execution
+# Execution
 
 This project is a Java Swing application
 
@@ -511,11 +519,7 @@ Navigate to the root directory of your project where all java files are located 
 
 javac *java
 
-This command will compile all Java source files in the current directory If your classes are organized into packages, you will need to adjust the javac command accordingly (eg, javac -d  src/*java)
-
-To Execute:
 After successful compilation, run the application by executing the MainFrame class, which contains the main method
 
 java MainFrame
 
-This will launch the game window

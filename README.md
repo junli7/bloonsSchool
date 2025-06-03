@@ -1,5 +1,11 @@
 # **Italian Brainrot Tower Defense** 
 
+## Contributors
+Derek Zhang
+Johnny Li
+
+## Intro
+
 This project is a simple tower defense game It is the combination of **BloonsTD** with **italian brainrot**. The main objective of the game is to survive as many rounds as possible by placing and upgrading italian brainrot characters. Enemies are different variants of humans attempting to traverse the path. If a human makes it past, then you lose a life. 
 
 The <ins> GamePanel</ins> class handles visuals (drawing), user input, and the game loop This includes movement of enemies (humans), monkeys (characters) and wave management 
@@ -509,5 +515,3 @@ Compile and Execute:
 After successful compilation, run the application by executing the MainFrame class, which contains the main method
 
 java MainFrame
-
-This will launch the game window

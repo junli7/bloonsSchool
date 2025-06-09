@@ -1,3 +1,237 @@
+hi mrs kas: i redid it with the template thing
+
+/******************************************************************************
+ *  Name:     Johnny Li
+ *
+ *  Partner Name:      Derek Zhang  
+ *
+ ******************************************************************************/
+
+Final Project Name: Italian Brainrot Tower Defense
+
+/******************************************************************************
+ *  Describe how decided to implement this project. Is it original? or a spin-off
+ *  a similar project? If it is the latter, submit a link or documentation to it.
+ *****************************************************************************/
+This project is based on the game Bloons Tower Defense. We created a spin off with Italian brainrot meme theme. We chose this because it is a familiar genre(tower defense) combined with a current meme.
+The original series: https://btd6.com/
+
+We implemented it using Java's Swing for the GUI with JPanel to render the visuals and a timer for the main loop.
+The classes are used like this:
+MainFrame as the primary application window.
+GamePanel to handle game logic, rendering, and user interactions.
+GameState to encapsulate core game variables (money, lives, wave number).
+Entity classes like Human (enemies), Monkey (towers), and Projectile.
+UI helper panels like SideInfoPanel (for buying towers and game info) and UpgradeControlPanel (for tower upgrades).
+SpriteManager for efficient image loading and caching.
+This modular approach was chosen for better organization and clear separation of concerns, which was important because of the multiple components of the game.
+
+/******************************************************************************
+ *  Describe step by step how to execute your project successfully.
+ * If multiple conditions result in different outputs, describe the steps 
+ * to achieve the different outcomes.
+ *u
+ ******************************************************************************/
+Assuming you have a java JDK, place all .java and .png files in the same directory. Open MainFrame.java using VSCODE. Compile and Run.
+A window will appear. The game begins paused, you may click the start wave button(top right) once you are ready. Click the buy buttons below to select monkeys to place down, after clicking on a buy button, click on a spot on the map to place your monkey(within boundaries and not on path). Once a monkey is placed, you can see its range and modify the monkey's stats by selling or upgrading it by clicking on it. 
+
+Survive waves by strategically upgrading and placing monkeys. If a human reaches the end of the path, then you will lose lives depending on how many points that human is worth(weaker=less points)
+
+There is no game win, the waves are infinite and get progressively harder. Once the lives reach 0, the game will end, prompting for a game restart. Clicking the restart button will reset to initial state.
+/******************************************************************************
+ *  Describe the data types you used to implement  your project
+ *  
+ *****************************************************************************/
+
+ Custom classes:
+   MainFrame: The main window container (extends JFrame).
+   GamePanel: Manages game rendering, game loop, user input, and entity management (extends JPanel).
+   GameState: Tracks core game variables like money, lives, and wave number.
+   Monkey: Base class for player-controlled towers, handling placement, targeting, shooting, and upgrades.
+   MonkeyB, MonkeyC: Specialized subclasses of Monkey with unique abilities (explosive, slowing).
+   Human: Represents enemy units, managing their health, movement along a path, and type.
+   Map: Defines the path for Human enemies using a list of coordinates.
+   Projectile: Represents projectiles fired by Monkey objects, handling their movement, damage, and special effects (e.g. explosion, slow).
+   SideInfoPanel: UI panel displaying game state (money, lives) and options to buy monkeys (extends JPanel).
+   UpgradeControlPanel: UI panel for upgrading and selling selected Monkey instances (extends JPanel).
+   UpgradeGUI: Handles the visual drawing and interaction logic within the UpgradeControlPanel.
+   SpriteManager: Manages loading, caching, and resizing of image sprites.
+   WaveDefinition (Inner class in GamePanel): Defines the composition of an enemy wave using a list of SpawnInstructions.
+   SpawnInstruction (Inner class in GamePanel): Defines a group of enemies (type, count, delay, interval) to spawn within a wave.
+
+Standard Java Data Types:
+   Primitive Types:
+       int: Used for counts (e.g., humansKilled, currentWave), money, health, coordinates, levels, pixel dimensions, array indices, ticks.
+       double: Used for precise coordinates, speed, range, rates, angles, percentages.
+       boolean: Used for flags and conditions (e.g., isPlacingMonkey, gameIsOver, camo, isSelected, placementValid).
+       long: Used for time-based calculations (e.g., lastShotTime, slowEffectEndTimeMillis).
+   Object Types (from Java Standard Library):
+       String: For identifiers (monkey types, human types, archetype names), file paths for sprites, UI text labels.
+       List<E>: To store collections of Monkey objects, Human objects, Projectile objects, path coordinates (java.awt.Point), and SpawnInstructions within a WaveDefinition.
+       Map<K, V> (primarily java.util.HashMap<K, V>): Used in SpriteManager to cache BufferedImages (value) by their String file path (key).
+       java.awt.Point: To store (x, y) coordinates, particularly for defining the enemy path in the Map class.
+       java.awt.Rectangle: For defining clickable areas for UI buttons and potentially for hitboxes.
+       java.awt.Color: For UI elements, drawing projectiles, range indicators, and visual effects.
+       java.awt.image.BufferedImage: To store and manipulate images/sprites loaded from files.
+       java.util.Random: For any procedural generation aspects, like selecting sprite variants or defining procedural waves.
+       javax.swing.JLabel, javax.swing.JButton: Core Swing components used in SideInfoPanel and other UI parts.
+       java.awt.Font: For styling text in UI elements.
+       java.awt.Graphics, java.awt.Graphics2D: Used in paintComponent methods for drawing.
+       Enum (for Projectile.State): To represent discrete states of a projectile (active, exploding, spent).
+
+
+
+
+
+/******************************************************************************
+ *  Describe the methods used in your ADTs
+ *****************************************************************************/
+
+1.  Constructor Methods:
+       Purpose: Initialize new objects, set up their initial state, load default values, and establish dependencies.
+       Examples: GamePanel(), GameState(initialLives, initialMoney), Monkey(x, y, type), Human(type, map), Projectile(...).
+
+2.  Game Logic and Update Methods:
+       Purpose: Implement core game mechanics, entity behavior, and state transitions during each game tick.
+       Examples:
+           GamePanel.updateGame(): Main game loop logic; updates humans, monkeys, projectiles, checks wave status, handles spawning.
+           Human.move(List<Point> path): Advances human along the path.
+           Human.takeDamage(int amount): Reduces human's health.
+           Monkey.findTarget(List<Human> humans): Selects a human to attack within range.
+           Monkey.shoot(Human target): Creates and fires a projectile.
+           Monkey.updateProjectiles(List<Human> humans, GameState gs): Updates projectiles fired by this monkey.
+           Projectile.update(List<Human> humans, GameState gs): Moves projectile, checks for hits, applies effects.
+           GameState.addMoney(int amount), GameState.loseLife(), GameState.incrementWave().
+
+3.  Drawing and Rendering Methods:
+       Purpose: Responsible for drawing all visual elements onto the screen.
+       Examples:
+           paintComponent(Graphics g): Overridden in GamePanel, SideInfoPanel, UpgradeControlPanel, UpgradeGUI to draw respective elements.
+           Helper methods within these classes like drawHumans(Graphics2D g), drawMonkeys(Graphics2D g), drawProjectiles(Graphics2D g), drawUI(Graphics g).
+           SpriteManager.getScaledSprite(...): Provides images for drawing.
+
+4.  Event Handling Methods:
+       Purpose: Respond to user input, such as mouse clicks and movements.
+       Examples:
+           Methods from MouseListener and MouseMotionListener (e.g., mousePressed, mouseMoved, mouseClicked) implemented in GamePanel (for placing/selecting monkeys), UpgradeGUI (for upgrade/sell buttons), and SideInfoPanel (for buy buttons if custom-drawn).
+           actionPerformed(ActionEvent e) for JButtons in SideInfoPanel (e.g., "Start Game" button, monkey buy buttons).
+
+5.  Setter Methods (Mutators):
+       Purpose: Modify the internal state or properties of objects.
+       Examples: Monkey.setSelected(boolean), Human.applySlow(double rate, int duration), GameState.setMoney(int amount).
+
+6.  Getter Methods (Accessors):
+       Purpose: Provide read-only access to an object's internal state or properties.
+       Examples: Monkey.getRange(), Human.getHealth(), GameState.getMoney(), SpriteManager.getSprite(String path).
+
+7.  Utility and Helper Methods:
+       Purpose: Perform specific supporting tasks like calculations, resource loading, or object creation.
+       Examples:
+           SpriteManager.loadSprite(String path), SpriteManager.resizeImage(BufferedImage, int, int).
+           Methods for calculating distance between points, angles for projectiles.
+           GamePanel.spawnHuman(String type, boolean isCamo): Creates and adds a human to the game.
+           GamePanel.isValidPlacement(int x, int y, double hitbox): Checks if a monkey can be placed at given coordinates.
+
+8.  Upgrade and Archetype Methods:
+       Purpose: Manage the progression and specialization of monkeys.
+       Examples:
+           Monkey.upgrade(): Applies stat boosts according to its current level/path.
+           Monkey.canAffordUpgrade(int currentMoney)
+           Monkey.setArchetype(String archetype): Commits monkey to a specific upgrade path.
+           Methods in UpgradeGUI to display upgrade options, costs, and process clicks related to upgrades, archetype choices, and selling.
+           Monkey.getSellValue(): Calculates money returned on selling.
+
+9.  UI Component Styling and Creation Methods:
+       Purpose: Specifically for setting up and styling Swing UI components.
+       Examples:
+           Methods in SideInfoPanel to create and configure JButtons for buying monkeys and JLabels for displaying info.
+           Methods in UpgradeGUI to define button bounds, colors, fonts, and text for the upgrade interface.
+
+
+
+
+
+
+
+/******************************************************************************
+ *  Describe the data needed for your project.
+ *  Submit data file(s) to run your project. What is the name of the data file(s)?
+ *  Describe the purpose of the data.
+ *  Describe the multiple testing done to demonstrate a successful implementation.
+ *****************************************************************************/
+This project uses sprites(images) to run. 
+
+   map_background.png: Image file used as the background for the game map.
+   human_baby.png: Sprite for the "baby" human enemy.
+   human_kid0.png, human_kid1.png: Sprites for "kid" human enemy variants.
+   human_normal0.png, human_normal1.png, human_normal2.png: Sprites for "normal" human enemy variants.
+   human_bodybuilder.png: Sprite for the "bodybuilder" human enemy.
+   human_businessman.png: Sprite for the "businessman" human enemy.
+   human_bigbaby.png: Sprite for the "big baby" (boss) human enemy.
+   human_ninja.png: Sprite for the "ninja" human enemy.
+   human_bossninja.png: Sprite for the "boss ninja" human enemy.
+   monkey_base_idle.png: Sprite for the default monkey when idle.
+   monkey_base_shoot.png: Sprite for the default monkey when shooting.
+   monkey_bomber_idle.png: Sprite for the Bomber Monkey when idle.
+   monkey_bomber_shoot.png: Sprite for the Bomber Monkey when shooting.
+   monkey_slow_idle.png: Sprite for the Slow Monkey when idle.
+   monkey_slow_shoot.png: Sprite for the Slow Monkey when shooting.
+   explosion_effect.png: Sprite for the visual effect of explosions (Bomber Monkey).
+   project_slow.png: Sprite for the slow projectile or its impact/area effect (from Slow Monkey).
+   projectile_dart.png: Default sprite for standard projectiles.
+   projectile_bomb.png: Sprite for bomb projectiles.
+
+The data is used to render colorful and detailed objects, that would be highly difficult and inefficient if using default shapes in java. The SpriteManager class is responsible for loading and managing these images.
+
+
+The game has been played through(till lives are 0) ~50 times, no issues arise.
+
+
+ 
+
+/******************************************************************************
+ *  Known bugs/limitations.
+ *****************************************************************************/
+Performance when there are a significant amount of Human and Projectile objects will be degraded, as a limitation of Java Swing.
+Balancing a game is difficult, some troops are inherently stronger than others.
+There are no save features. Closing the program means losing progress, if mid game.
+There is no audio
+Projectile hitboxes are circles, not the exact pixels of the sprites.
+
+/******************************************************************************
+ *  Describe whatever help (if any) that you received.
+ *  Don't include readings, lectures, and precepts, but do
+ *  include any help from people (including course classmates, and friends)
+ *  and attribute them by name.
+ *****************************************************************************/
+I asked AI language models for help on drawing the objects into a java window.
+
+/******************************************************************************
+ *  Describe any serious problems you encountered.                    
+ *****************************************************************************/
+
+
+/***************************************************************************************
+* Collaboration with a partner.  Both students must work together and discuss, write,
+* debug, test, analyze, document, and submit all elements of the assignment together.
+* Both partners are responsible for understanding all parts of the submitted assignment
+* and receive the same grade. If two students begin working on an assignment as partners
+* and cannot complete it together, (at least) one student must contact me to request a 
+* partnership dissolution.
+ **************************************************************************************/
+
+ 
+
+
+/******************************************************************************
+ *  List any other comments here. Feel free to provide any feedback   
+ *  on  how helpful the class meeting was and on how much you learned 
+ * from doing the assignment, and whether you enjoyed doing it.
+ *****************************************************************************/
+
+
+
+
 # **Italian Brainrot Tower Defense** 
 
 ## Contributors

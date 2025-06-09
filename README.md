@@ -204,12 +204,12 @@ Projectile hitboxes are circles, not the exact pixels of the sprites.
  *  include any help from people (including course classmates, and friends)
  *  and attribute them by name.
  *****************************************************************************/
-I asked AI language models for help on drawing the objects into a java window.
+I asked AI language models(like school ai) for help on drawing the objects into a java window.
 
 /******************************************************************************
  *  Describe any serious problems you encountered.                    
  *****************************************************************************/
-i had no idea how to do rendering so i asked ai for help
+i had no idea how to do rendering so i asked ai (school ai) for help
 
 /***************************************************************************************
 * Collaboration with a partner.  Both students must work together and discuss, write,

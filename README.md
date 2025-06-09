@@ -209,7 +209,7 @@ I asked AI language models for help on drawing the objects into a java window.
 /******************************************************************************
  *  Describe any serious problems you encountered.                    
  *****************************************************************************/
-
+i had no idea how to do rendering so i asked ai for help
 
 /***************************************************************************************
 * Collaboration with a partner.  Both students must work together and discuss, write,
@@ -231,6 +231,10 @@ I asked AI language models for help on drawing the objects into a java window.
 
 
 
+
+
+
+previous readme
 
 # **Italian Brainrot Tower Defense** 
 
